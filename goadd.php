@@ -32,6 +32,14 @@ if ($result && $result->num_rows > 0) {
     exit();
 }
 
+function isMatch($category, $specName){
+    if ($specName == "Resistance" && str_contains($category, 'esistor'))
+        return true;
+    if ($specName == "Capacitance" && str_contains($category, 'apacitor'))
+        return true;
+    return false;
+}
+
 $mpn = $input;
 $description = "";
 $category = "-";
@@ -49,7 +57,7 @@ if (array_key_exists("data", $nexarData)) {
         $nexarData = $nexarData["supSearch"];
         if (array_key_exists("results", $nexarData)) {
             $nexarData = $nexarData["results"];
-            if (count($nexarData) > 0) {
+            if ($nexarData && count($nexarData) > 0) {
                 $nexarData = $nexarData[0];
                 if (array_key_exists("part", $nexarData)) {
                     $nexarData = $nexarData["part"];
@@ -67,13 +75,19 @@ if (array_key_exists("data", $nexarData)) {
                     }
 
                     // Continue with specs
+                    $firstValue = true;
                     $valueSet = false;
                     $packageSet = false;
                     if (array_key_exists("specs", $nexarData)) {
                         $specs = $nexarData["specs"];
                         for ($i = 0; $i < count($specs); $i++) {
                             $spec = $specs[$i];
-                            if (!$valueSet) {
+                            if ($firstValue && $spec["valueType"] == "number") {
+                                $value = $spec["value"];
+                                $valueUnit = $spec["units"];
+                                $firstValue = false;
+                            }
+                            if (!$valueSet && isMatch($category, $spec["attribute"]["name"])) {
                                 if ($spec["valueType"] == "number") {
                                     $value = $spec["value"];
                                     $valueUnit = $spec["units"];

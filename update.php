@@ -22,7 +22,11 @@ foreach($commands AS $command){
     $tmp = shell_exec($command);
     // Output
     $output .= "<span style=\"color: #6BE234;\">\$</span> <span style=\"color: #729FCF;\">{$command}\n</span>";
-    $output .= htmlentities(trim($tmp)) . "\n";
+    if ($tmp) {
+        $output .= htmlentities(trim($tmp)) . "\n";
+    } else {
+        $output .= "\n";
+    }
 }
 
 // Make it pretty for manual user access (and why not?)
