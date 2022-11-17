@@ -164,7 +164,7 @@ if ($input != $mpn) {
             </tr>
             <tr>
                 <td>Omschrijving:</td>
-                <td><input type="text" name="desc" value="<?php echo("$description"); ?>"/></td>
+                <td><textarea id="desc" name="desc" rows="4" cols="80"><?php echo("$description"); ?></textarea></td>
             </tr>
             <tr>
                 <td>Categorie:</td>

@@ -218,6 +218,13 @@ if ($result && $result->num_rows > 0) {
             <input name="opslaan" type="submit" value="opslaan"/>
         </form>
     </div>
+    <div>
+        <h3>Component aanpassen</h3>
+        <form action="edit.php" method="post">
+            <input type="hidden" name="id" value="<?php echo($id); ?>">
+            <input name="opslaan" type="submit" value="Edit"/>
+        </form>
+    </div>
     <?php
     printFooter();
 } else {

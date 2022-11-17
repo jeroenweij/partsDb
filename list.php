@@ -66,18 +66,23 @@ function printSublocaton($selectedValue)
             printSelect("packages");
             printSelect("units");
             printSelect("projects");
+            ?><label style="display: inline-block"><?php
             printSelect("locations");
             $sublocation = 0;
             if (isset($_POST["sublocation"])) {
                 $sublocation = $_POST["sublocation"];
             }
             printSublocaton($sublocation, true);
+            ?></label><?php
             $checked = "";
             if (isset($_POST["instock"])) {
                 $checked = "checked";
             }
             ?>
-            op&nbsp;vooraad <input type="checkbox" name="instock" <?php echo("$checked"); ?> />
+            <label style="display: inline-block">
+                <input id="checkbox_id" type="checkbox" name="instock" <?php echo("$checked"); ?> />
+                op&nbsp;vooraad
+            </label>
             <input name="" type="submit" value="Filters toepassen" style="float: right" />
         </form>
     </div>

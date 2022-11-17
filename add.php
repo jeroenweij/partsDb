@@ -17,7 +17,7 @@ if (isset($_POST["mpn"])) {
     $unit = validateNumberInput($_POST["select-units"]);
     $location = validateNumberInput($_POST["select-locations"]);
     $sublocation = validateNumberInput($_POST["sublocation"]);
-    $tag= validateInput($_POST["tag"]);
+    $tag = validateInput($_POST["tag"]);
 
     $query = "INSERT INTO `parts` 
            (`name`,      `description`,  `type`,  `value`,   `stock`,  `package`,  `unit`,  `location`,  `sublocation`) 
@@ -33,7 +33,7 @@ if (isset($_POST["mpn"])) {
             echo("<a href=\"item.php?id=$partid\">$partNum openen.</a>");
 
             // Add Tag
-            if (strlen($tag)>2){
+            if (strlen($tag) > 2) {
                 $conn->query("INSERT INTO `tags` (`tag`, `part`) VALUES ('$tag', '$partid');");
             }
 
@@ -54,7 +54,7 @@ if (isset($_POST["mpn"])) {
 
 
 ?>
-
+    <p>Voeg een nieuw onderdeel toe aan de database, Vul de naam van het onderdeel in.</p>
     <form action="goadd.php" method="post">
         <input name="q" type="text" value=""/>&nbsp;
         <input class="twohndrdpx" name="submit" type="submit" value="Toevoegen"/>
