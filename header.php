@@ -1,5 +1,18 @@
 <?php
 
+$fileList = get_included_files();
+$topfile = basename($fileList[0]);
+
+function addLink($target, $name): void
+{
+    global $topfile;
+    $class = "";
+    if ($topfile == $target) {
+        $class = 'class="active"';
+    }
+    echo("        <a $class href='$target'>$name</a>");
+}
+
 function printHeader($title): void
 {
     echo("<!DOCTYPE html>");
@@ -15,20 +28,23 @@ function printHeader($title): void
 
     ?>
     <div class="topnav">
-        <a class="active" href="index.php">Home</a>
-        <a href="list.php">Inzien</a>
-        <a href="projects.php">Projecten</a>
-        <a href="locations.php">Locaties</a>
-        <a href="types.php">Types</a>
-        <a href="add.php">Toevoegen</a>
+        <?php
+        addLink("index.php", "Home");
+        addLink("list.php", "Inzien");
+        addLink("projects.php", "Projecten");
+        addLink("locations.php", "Locaties");
+        addLink("types.php", "Types");
+        addLink("add.php", "Toevoegen");
+        ?>
         <div class="search-container">
             <form action="search.php" method="post">
                 <input type="text" placeholder="Zoek.." name="q">
-                <input name="submit" type="submit" value="Ga" />
+                <input name="submit" type="submit" value="Ga"/>
             </form>
         </div>
     </div>
     <?php
+    echo "<h2>$title</h2>\n";
 }
 
 function printFooter(): void
@@ -37,4 +53,5 @@ function printFooter(): void
     echo("</body>");
     echo('</html>');
 }
+
 ?>

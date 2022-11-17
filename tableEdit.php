@@ -1,5 +1,5 @@
 <?php
-if (!isset($table)) {
+if (!isset($table) || !isset($title)) {
     header("Location: index.php");
     exit();
 }
@@ -12,15 +12,12 @@ if (isset($_POST["new"])) {
     $conn->query($sql);
 }
 
-
-$title = ucfirst($table);
 printHeader($title);
-echo "<h2>$title</h2>\n";
 
-$refdb= "parts";
-$refname=substr($table, 0 ,-1);
-if ($table == "projects"){
-    $refdb= "partproject";
+$refdb = "parts";
+$refname = substr($table, 0, -1);
+if ($table == "projects") {
+    $refdb = "partproject";
 }
 $sql = "SELECT id, name, (SELECT COUNT(*) FROM $refdb WHERE $refdb.$refname = $table.id) AS ref FROM $table;";
 $result = $conn->query($sql);
@@ -49,14 +46,14 @@ if ($result && $result->num_rows > 0) {
     </table>
 
     <br/>
-    <h2>Toevoegen</h2>
-    <form action="<?php echo($table); ?>.php" method="post">
-        <input name="new" type="text" value=""/><br/>
-        <input class="twohndrdpx" name="submit" type="submit" value="Toevoegen"/>
-    </form>
     <?php
 }
 ?>
+    <h3>Toevoegen</h3>
+    <form action="<?php echo($table); ?>.php" method="post">
+        <input name="new" type="text" value=""/> &nbsp;
+        <input class="twohndrdpx" name="submit" type="submit" value="Toevoegen"/>
+    </form>
 
 <?php
 printFooter();

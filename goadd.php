@@ -32,7 +32,8 @@ if ($result && $result->num_rows > 0) {
     exit();
 }
 
-function isMatch($category, $specName){
+function isMatch($category, $specName)
+{
     if ($specName == "Resistance" && str_contains($category, 'esistor'))
         return true;
     if ($specName == "Capacitance" && str_contains($category, 'apacitor'))
@@ -50,7 +51,6 @@ $partCount = "0";
 $location = "";
 
 $nexarData = json_decode(nexarQuery($input), true);
-
 if (array_key_exists("data", $nexarData)) {
     $nexarData = $nexarData["data"];
     if (array_key_exists("supSearch", $nexarData)) {
@@ -69,8 +69,14 @@ if (array_key_exists("data", $nexarData)) {
                     }
                     if (array_key_exists("category", $nexarData)) {
                         $catArray = $nexarData["category"];
-                        if (array_key_exists("name", $catArray)) {
+                        if ($catArray && array_key_exists("name", $catArray)) {
                             $category = $catArray["name"];
+                        } else {
+                            if (str_contains($description, "Res")) {
+                                $category = "Resistor";
+                            } else if (str_contains($description, "Cap")) {
+                                $category = "Capacitor";
+                            }
                         }
                     }
 
@@ -145,7 +151,7 @@ $package = stringToId("packages", $package);
 $location = stringToId("locations", $location);
 
 require('formFunctions.php');
-if ($input != $mpn){
+if ($input != $mpn) {
     echo("<h2 style='color: #ff0000'>\"$input\" niet gevonden. bedoelde je: \"$mpn\"?</h2>");
 }
 ?>
@@ -185,12 +191,12 @@ if ($input != $mpn){
             </tr>
             <tr>
                 <td>Aantal:</td>
-                <td><input type="text" name="stock" value="<?php echo("$partCount"); ?>" /></td>
+                <td><input type="text" name="stock" value="<?php echo("$partCount"); ?>"/></td>
             </tr>
         </table>
 
         <h4>Tag</h4>
-        <input type="text" name="tag" value="" />
+        <input type="text" name="tag" value=""/>
 
         <h4>Gebruikt in</h4>
         <table>

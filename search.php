@@ -11,14 +11,7 @@ $txt=$_POST['q'];
 $input = scan2id(validateInput($_POST["q"]));
 
 printHeader("Zoeken");
-?>
 
-    <form action="index.php">
-        <input name="submit" type="submit" value="Hoofdpagina"/>
-    </form>
-    <br/>
-
-    <?php
 
     $condition = "";
     $sql = "SELECT parts.id FROM parts WHERE";
@@ -68,7 +61,7 @@ printHeader("Zoeken");
         ?>
         <br />
         <form action="search.php" method="post">
-            <input name="q" type="text" value="" /><br />
+            <input name="q" type="text" value="" />&nbsp;
             <input class="twohndrdpx" name="submit" type="submit" value="Zoek" />
         </form>
     <?php

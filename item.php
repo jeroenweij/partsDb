@@ -78,7 +78,6 @@ if ($result && $result->num_rows > 0) {
     $row = $result->fetch_assoc();
     printHeader($row["name"]);
 
-    echo("<h2>" . $row["name"] . "</h2>");
     echo("<p>" . $row["description"] . "</p>");
     ?>
     <div style="height: 200px">

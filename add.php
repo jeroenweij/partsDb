@@ -48,16 +48,15 @@ if (isset($_POST["mpn"])) {
             }
         }
     } else {
-        echo("<h3>Toevoegen gefaald!</h3>");
+        echo("<h3 style='color: #ff0000'>Toevoegen gefaald!</h3>");
     }
 }
 
 
 ?>
 
-    <h3>Toevoegen</h3>
     <form action="goadd.php" method="post">
-        <input name="q" type="text" value=""/><br/>
+        <input name="q" type="text" value=""/>&nbsp;
         <input class="twohndrdpx" name="submit" type="submit" value="Toevoegen"/>
     </form>
 

@@ -2,13 +2,12 @@
 
 require('header.php');
 
-printHeader("PartsDB");
+printHeader("Componenten");
 ?>
-
     <h3>Opzoeken.</h3>
 
     <form action="search.php" method="post">
-    <input name="q" type="text" value="" /><br />
+    <input name="q" type="text" value="" />&nbsp;
     <input class="twohndrdpx" name="submit" type="submit" value="Zoek" />
     </form>
 
@@ -24,7 +23,7 @@ printHeader("PartsDB");
 
     <h3>Toevoegen.</h3>
     <form action="goadd.php" method="post">
-        <input name="q" type="text" value="" /><br />
+        <input name="q" type="text" value="" />&nbsp;
         <input class="twohndrdpx" name="submit" type="submit" value="Toevoegen" />
     </form>
 
