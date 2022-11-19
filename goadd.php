@@ -5,7 +5,7 @@ if ((!isset($_POST["q"]) || strlen($_POST["q"]) == 0) && !isset($_POST["mpn"])) 
 }
 require('mysqlConn.php');
 require('scan2id.php');
-require('nexar.php');
+require('nexarAPI.php');
 require('header.php');
 
 $input = scan2id(validateInput($_POST["q"]));
@@ -37,6 +37,8 @@ function isMatch($category, $specName)
     if ($specName == "Resistance" && str_contains($category, 'esistor'))
         return true;
     if ($specName == "Capacitance" && str_contains($category, 'apacitor'))
+        return true;
+    if ($specName == "Output Current" && str_contains($category, 'Voltage Regulator'))
         return true;
     return false;
 }

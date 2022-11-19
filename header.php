@@ -50,9 +50,14 @@ function printHeader($title): void
 
 function printFooter(): void
 {
+    global $conn;
     echo("</div>");
     echo("</body>");
     echo('</html>');
+
+    if (isset($conn)){
+        $conn->close();
+    }
 }
 
 ?>

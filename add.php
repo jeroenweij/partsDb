@@ -56,7 +56,7 @@ if (isset($_POST["mpn"])) {
 ?>
     <p>Voeg een nieuw onderdeel toe aan de database, Vul de naam van het onderdeel in.</p>
     <form action="goadd.php" method="post">
-        <input name="q" type="text" value=""/>&nbsp;
+        <input name="q" type="text" value="" autofocus />&nbsp;
         <input class="twohndrdpx" name="submit" type="submit" value="Toevoegen"/>
     </form>
 
