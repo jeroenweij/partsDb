@@ -1,5 +1,5 @@
 <?php
-if (!isset($_POST["q"])) {
+if (!isset($_POST["q"]) || strlen($_POST["q"]) == 0) {
     header("Location: index.php");
     exit();
 }

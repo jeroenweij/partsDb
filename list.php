@@ -11,7 +11,7 @@ if (isset($_POST["q"])) {
     $input = scan2id(validateInput($_POST["q"]));
 }
 
-function printSelect($table)
+function printFilterSelect($table, $name)
 {
     global $conn;
     $itemname = "view-$table";
@@ -20,7 +20,7 @@ function printSelect($table)
         $selectedValue = $_POST[$itemname];
     }
 
-    echo(substr($table, 0, -1) . " ");
+    echo("$name ");
     echo "<select name=\"$itemname\">\n";
     echo "<option value=\"0\">All</option>\n";
     $stresult = $conn->query("SELECT DISTINCT name, id FROM $table ORDER BY name");
@@ -62,12 +62,12 @@ function printSublocaton($selectedValue)
         <form action="" method="post">
             &nbsp;<input type="text" value="<?php echo($input); ?>" name="q"/>
             <?php
-            printSelect("types");
-            printSelect("packages");
-            printSelect("units");
-            printSelect("projects");
+            printFilterSelect("types", "Type");
+            printFilterSelect("packages", "Package");
+            printFilterSelect("units", "Unit");
+            printFilterSelect("projects", "Project");
             ?><label style="display: inline-block"><?php
-            printSelect("locations");
+            printFilterSelect("locations", "Lokatie");
             $sublocation = 0;
             if (isset($_POST["sublocation"])) {
                 $sublocation = $_POST["sublocation"];
