@@ -32,13 +32,17 @@ if ($result && $result->num_rows > 0) {
     exit();
 }
 
-function isMatch($category, $specName)
+function isMatch($parent, $category, $specName)
 {
-    if ($specName == "Resistance" && str_contains($category, 'esistor'))
+    if ($specName == "Resistance" && $parent == "resistors")
         return true;
-    if ($specName == "Capacitance" && str_contains($category, 'apacitor'))
+    if ($specName == "Capacitance" && $parent == "capacitors")
         return true;
-    if ($specName == "Output Current" && str_contains($category, 'Voltage Regulator'))
+    if ($specName == "Output Current" && ($parent == "power-management-ics" || $parent == "linear-ics"))
+        return true;
+    if ($specName == "Output Power" && $parent == "linear-ics")
+        return true;
+    if ($specName == "Density" && ($parent == "memory" || $parent == "embedded-processors-and-controllers"))
         return true;
     return false;
 }
@@ -46,7 +50,8 @@ function isMatch($category, $specName)
 $mpn = $input;
 $description = "";
 $category = "-";
-$value = "";
+$parent = "-";
+$value = "0";
 $valueUnit = "-";
 $package = "-";
 $partCount = "0";
@@ -73,6 +78,10 @@ if (array_key_exists("data", $nexarData)) {
                         $catArray = $nexarData["category"];
                         if ($catArray && array_key_exists("name", $catArray)) {
                             $category = $catArray["name"];
+                            $catpath = explode("/", $catArray["path"]);
+                            if (count($catpath) > 2) {
+                                $parent = $catpath[count($catpath) - 2];
+                            }
                         } else {
                             if (str_contains($description, "Res")) {
                                 $category = "Resistor";
@@ -83,19 +92,14 @@ if (array_key_exists("data", $nexarData)) {
                     }
 
                     // Continue with specs
-                    $firstValue = true;
                     $valueSet = false;
                     $packageSet = false;
                     if (array_key_exists("specs", $nexarData)) {
                         $specs = $nexarData["specs"];
                         for ($i = 0; $i < count($specs); $i++) {
                             $spec = $specs[$i];
-                            if ($firstValue && $spec["valueType"] == "number") {
-                                $value = $spec["value"];
-                                $valueUnit = $spec["units"];
-                                $firstValue = false;
-                            }
-                            if (!$valueSet && isMatch($category, $spec["attribute"]["name"])) {
+
+                            if (!$valueSet && isMatch($parent, $category, $spec["attribute"]["name"])) {
                                 if ($spec["valueType"] == "number") {
                                     $value = $spec["value"];
                                     $valueUnit = $spec["units"];
@@ -104,6 +108,7 @@ if (array_key_exists("data", $nexarData)) {
                                     $valueSet = true;
                                 }
                             }
+                            
                             if (!$packageSet) {
                                 if ($spec["attribute"]["name"] == "Case/Package") {
                                     $package = $spec["value"];

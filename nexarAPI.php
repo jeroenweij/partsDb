@@ -49,6 +49,7 @@ function nexarQuery($manuPartId)
             mpn
             category {
               name
+              path
             }
             shortDescription
             specs{
