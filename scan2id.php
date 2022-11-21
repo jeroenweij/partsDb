@@ -12,6 +12,11 @@ function scan2id($input)
                 break;
             }
         }
+    } else {
+        if (strlen($input) > 70 && substr_count($input, "&") > 6){
+            $splitted = explode("&", $input);
+            $input = $splitted[3];
+        }
     }
 
     if (str_starts_with($input, "1P"))
