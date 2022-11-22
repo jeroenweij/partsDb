@@ -2,9 +2,10 @@
 
 function scan2id($input)
 {
-    if (str_starts_with($input, "[)>") && str_contains($input, "?") ){
+    if ((str_starts_with($input, "[)>") || str_starts_with($input, ">[)>")) && str_contains($input, "?") ){
         // Data matrix
         $splitted = explode("?", $input);
+        $input = "";
         foreach ($splitted as $value) {
             if (str_starts_with($value, "1P"))
             {
@@ -13,7 +14,7 @@ function scan2id($input)
             }
         }
     } else {
-        if (strlen($input) > 70 && substr_count($input, "&") > 6){
+        if (strlen($input) > 60 && substr_count($input, "&") > 6){
             $splitted = explode("&", $input);
             $input = $splitted[3];
         }

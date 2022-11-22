@@ -9,7 +9,7 @@ printHeader("Scan test");
 
 ?>
     <form action="scan.php" method="post">
-        <input name="q" type="text" value="" autofocus />&nbsp;
+        <input name="q" type="text" value="" autofocus/>&nbsp;
         <input class="twohndrdpx" name="submit" type="submit" value="Zoek"/>
     </form>
 <?php
@@ -57,30 +57,31 @@ if (isset($_POST["q"])) {
         ["[)>?06?PE1436867-PP?1PABS05-32.768KHZ-9-T?KE1436867-PP?1K77160310?10K91531851?11K1?4LCN?Q15?11ZPICK?12Z3508069?13Z229968?20Z0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", "ABS05-32.768KHZ-9-T"],
         ["[)>?06?PE1436867-PP?1PABM3B-8.000MHZ-10-1-U-T?KE1436867-PP?1K77160310?10K91531851?11K1?4LCN?Q15?11ZPICK?12Z1873255?13Z229969?20Z000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", "ABM3B-8.000MHZ-10-1-U-T"],
         ["[)>?06?PE1436867-PP?1P2N7002-7-F?KE1436867-PP?1K77160310?10K91531851?11K1?4LCN?Q15?11ZPICK?12Z717800?13Z229972?20Z00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", "2N7002-7-F"],
-
+        [">[)>06?KLA KAROLIJN?14K001?1PADAU7002ACBZ-R7?Q1500?11K060751217?4LSG?1VAnalog Devices Inc.", "ADAU7002ACBZ-R7"],
+        [">[)>06?KLA KAROLIJN?14K001?1ADAU7002ACBZ-R7?Q1500?11K060751217?4LSG?1VAnalog Devices Inc.", ""],
     ];
     ?>
     <table class="styled-table">
         <thead>
-            <tr>
-                <th>Input</th>
-                <th>Output</th>
-                <th>Expected</th>
-            </tr>
+        <tr>
+            <th>Input</th>
+            <th>Output</th>
+            <th>Expected</th>
+        </tr>
         </thead>
         <tbody>
-<?php
+    <?php
     foreach ($data as $value) {
         $output = scan2id(validateInput($value[0]));
-        $style="";
-        if( $output != $value[1]){
-            $style="style='color: #ff0000'";
+        $style = "";
+        if ($output != $value[1]) {
+            $style = "style='color: #ff0000'";
         }
 
         echo "<tr>\n";
-        echo("<td $style>".substr($value[0],0,40)."</td>\n");
+        echo("<td $style>" . substr($value[0], 0, 40) . "</td>\n");
         echo("<td $style>$output</td>\n");
-        echo("<td $style>".$value[1]."</td>\n");
+        echo("<td $style>" . $value[1] . "</td>\n");
         echo "</tr>\n";
     }
 
