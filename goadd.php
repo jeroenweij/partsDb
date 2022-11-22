@@ -34,6 +34,8 @@ if ($result && $result->num_rows > 0) {
 
 function isMatch($parent, $category, $specName)
 {
+    if ($specName == "Inductance" && $parent == "inductors")
+        return true;
     if ($specName == "Resistance" && $parent == "resistors")
         return true;
     if ($specName == "Capacitance" && $parent == "capacitors")
