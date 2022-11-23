@@ -60,6 +60,7 @@ if ($result && $result->num_rows > 0) {
             <th>ID</th>
             <th>naam</th>
             <th>aantal keer gebruikt</th>
+            <th>componernten</th>
             <th>aanpassen</th>
             <th>verwijderen</th>
         </tr>
@@ -71,6 +72,11 @@ if ($result && $result->num_rows > 0) {
             echo("        <td>" . $row["id"] . "</td>\n");
             echo("        <td>" . $row["name"] . "</td>\n");
             echo("        <td>" . $row["ref"] . "</td>\n");
+
+            echo("<td><form action=\"list.php\" method=\"post\">\n");
+            echo("<input type=\"hidden\" name=\"view-$table\" value=\"" . $row["id"] . "\">\n");
+            echo("<input type=\"submit\" value=\"Bekijken\" />\n");
+            echo("</form></td>\n");
 
             if ($row["id"] > 1 || $table == "projects") {
                 echo("<td><form action=\"$topfile\" method=\"post\">\n");
