@@ -15,16 +15,17 @@ function addLink($target, $name): void
 
 function printHeader($title): void
 {
-    echo("<!DOCTYPE html>");
-    echo('<html>');
-    echo('<head>');
-    echo('    <meta charset="utf-8">');
-    echo("    <title>$title</title>");
-    echo('    <link rel="stylesheet" href="css/navbar.css"/>');
-    echo('    <link rel="stylesheet" href="css/style.css"/>');
-    echo("</head>");
-    echo("<body>");
-    echo("<div class='form'>");
+    echo("<!DOCTYPE html>\n");
+    echo("<html>\n");
+    echo("<head>\n");
+    echo("    <meta charset=\"utf-8\">\n");
+    echo("    <title>$title</title>\n");
+    echo("    <link rel=\"stylesheet\" href=\"css/navbar.css\"/>\n");
+    echo("    <link rel=\"stylesheet\" href=\"css/style.css\"/>\n");
+    echo("    <link rel=\"shortcut icon\" href=\"favicon.ico\" type=\"image/x-icon\" />\n");
+    echo("</head>\n");
+    echo("<body>\n");
+    echo("<div class='form'>\n");
 
     ?>
     <div class="topnav">
