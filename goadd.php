@@ -46,6 +46,15 @@ function isMatch($parent, $category, $specName)
         return true;
     if ($specName == "Density" && ($parent == "memory" || $parent == "embedded-processors-and-controllers"))
         return true;
+    if ($parent == "emi-rfi-components") {
+        return ($specName == "DC Resistance (DCR)" || $specName == "Coil Resistance");
+    }
+    if ($parent == "crystals-and-oscillators") {
+        return ($specName == "Frequency");
+    }
+    if ($parent == "transistors") {
+        return ($specName == "Continuous Drain Current (ID)" || $specName == "Max Collector Current");
+    }
     return false;
 }
 
