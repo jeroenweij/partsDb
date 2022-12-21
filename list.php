@@ -93,7 +93,7 @@ function printSublocaton($selectedValue)
             ?>
             <label style="display: inline-block">
                 <input id="checkbox_id" type="checkbox" name="instock" <?php echo("$checked"); ?> />
-                op&nbsp;vooraad
+                op&nbsp;voorraad
             </label>
             <input name="" type="submit" value="Filters toepassen" style="float: right"/>
         </form>
@@ -193,7 +193,7 @@ if ($result && $result->num_rows > 0) {
             <th>Package</th>
             <th>Project</th>
             <th>Locatie</th>
-            <th>Vooraad</th>
+            <th>Voorraad</th>
         </tr>
         </thead>
         <tbody>

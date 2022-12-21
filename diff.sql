@@ -1,22 +1,3 @@
--- phpMyAdmin SQL Dump
--- version 5.1.1deb5ubuntu1
--- https://www.phpmyadmin.net/
---
--- Host: localhost:3306
--- Generation Time: Dec 21, 2022 at 02:19 PM
--- Server version: 10.6.7-MariaDB-2ubuntu1.1
--- PHP Version: 8.1.2-1ubuntu2.8
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
 --
 -- Database: `components`
 --
@@ -24,56 +5,202 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `stock`
+-- Table structure for table `companys`
 --
 
-CREATE TABLE `stock` (
+CREATE TABLE `companys` (
   `id` int(11) NOT NULL,
-  `partId` int(11) NOT NULL,
-  `location` int(11) NOT NULL,
-  `sublocation` int(11) NOT NULL,
+  `name` varchar(80) NOT NULL,
+  `address` varchar(200) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `extstock`
+--
+
+CREATE TABLE `extstock` (
+  `id` int(11) NOT NULL,
+  `part` int(11) NOT NULL,
+  `relation` int(11) NOT NULL,
   `count` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Indexes for dumped tables
---
+-- --------------------------------------------------------
 
 --
--- Indexes for table `stock`
+-- Table structure for table `orderpart`
 --
-ALTER TABLE `stock`
+
+CREATE TABLE `orderpart` (
+  `orderId` int(11) NOT NULL,
+  `part` int(11) NOT NULL,
+  `count` int(11) NOT NULL DEFAULT 0,
+  `packed` int(11) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `orderproject`
+--
+
+CREATE TABLE `orderproject` (
+  `orderId` int(11) NOT NULL,
+  `project` int(11) NOT NULL,
+  `count` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `orders`
+--
+
+CREATE TABLE `orders` (
+  `id` int(11) NOT NULL,
+  `name` varchar(80) NOT NULL,
+  `status` int(11) NOT NULL DEFAULT 1,
+  `relation` int(11) NOT NULL,
+  `company` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `packages`
+--
+-- Table structure for table `relations`
+--
+
+CREATE TABLE `relations` (
+  `id` int(11) NOT NULL,
+  `name` varchar(80) NOT NULL,
+  `contact` varchar(80) NOT NULL,
+  `address` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `statuses`
+--
+
+CREATE TABLE `statuses` (
+  `id` int(11) NOT NULL,
+  `name` varchar(16) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+--
+-- Indexes for table `companys`
+--
+ALTER TABLE `companys`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `extstock`
+--
+ALTER TABLE `extstock`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `partId` (`partId`),
-  ADD KEY `location` (`location`);
+  ADD KEY `part` (`part`),
+  ADD KEY `relation` (`relation`);
+  
+  --
+-- Indexes for table `orderpart`
+--
+ALTER TABLE `orderpart`
+  ADD KEY `order` (`orderId`),
+  ADD KEY `part` (`part`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- Indexes for table `orderproject`
 --
+ALTER TABLE `orderproject`
+  ADD KEY `order` (`orderId`),
+  ADD KEY `project` (`project`);
 
 --
--- AUTO_INCREMENT for table `stock`
+-- Indexes for table `orders`
 --
-ALTER TABLE `stock`
+ALTER TABLE `orders`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `relation` (`relation`),
+  ADD KEY `company` (`company`),
+  ADD KEY `status` (`status`);
+
+--
+-- Indexes for table `relations`
+--
+ALTER TABLE `relations`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `statuses`
+--
+ALTER TABLE `statuses`
+  ADD PRIMARY KEY (`id`);
+--
+-- AUTO_INCREMENT for table `companys`
+--
+ALTER TABLE `companys`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- Constraints for dumped tables
+-- AUTO_INCREMENT for table `extstock`
 --
+ALTER TABLE `extstock`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- Constraints for table `stock`
+-- AUTO_INCREMENT for table `orders`
 --
-ALTER TABLE `stock`
-  ADD CONSTRAINT `stock_ibfk_1` FOREIGN KEY (`partId`) REFERENCES `parts` (`id`),
-  ADD CONSTRAINT `stock_ibfk_2` FOREIGN KEY (`location`) REFERENCES `locations` (`id`);
-COMMIT;
+ALTER TABLE `orders`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `relations`
+--
+ALTER TABLE `relations`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+--
+-- AUTO_INCREMENT for table `statuses`
+--
+ALTER TABLE `statuses`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
--- ALTER TABLE `parts` DROP `sublocation`;
--- ALTER TABLE `parts` DROP `location`;
--- ALTER TABLE `parts` DROP `stock`;
+--
+-- Constraints for table `extstock`
+--
+ALTER TABLE `extstock`
+  ADD CONSTRAINT `extstock_ibfk_1` FOREIGN KEY (`part`) REFERENCES `parts` (`id`),
+  ADD CONSTRAINT `extstock_ibfk_2` FOREIGN KEY (`relation`) REFERENCES `relations` (`id`);
+
+--
+-- Constraints for table `orderpart`
+--
+ALTER TABLE `orderpart`
+  ADD CONSTRAINT `orderpart_ibfk_1` FOREIGN KEY (`orderId`) REFERENCES `orders` (`id`),
+  ADD CONSTRAINT `orderpart_ibfk_2` FOREIGN KEY (`part`) REFERENCES `parts` (`id`);
+
+--
+-- Constraints for table `orderproject`
+--
+ALTER TABLE `orderproject`
+  ADD CONSTRAINT `orderproject_ibfk_1` FOREIGN KEY (`orderId`) REFERENCES `orders` (`id`),
+  ADD CONSTRAINT `orderproject_ibfk_2` FOREIGN KEY (`project`) REFERENCES `projects` (`id`);
+
+--
+-- Constraints for table `orders`
+--
+ALTER TABLE `orders`
+  ADD CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`relation`) REFERENCES `relations` (`id`),
+  ADD CONSTRAINT `orders_ibfk_2` FOREIGN KEY (`company`) REFERENCES `companys` (`id`),
+  ADD CONSTRAINT `orders_ibfk_3` FOREIGN KEY (`status`) REFERENCES `statuses` (`id`);
+
+
+
+
+
 

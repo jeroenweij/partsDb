@@ -17,14 +17,15 @@ if (isset($_POST["diff"])) {
     $diff = validateNumberInput($_POST["diff"]);
     $operator = validateInput($_POST["adjust"]);
     $stockid = validateNumberInput($_POST["stockid"]);
+    $table = validateInput($_POST["table"]);
 
     if ($operator == "=") {
-        $sql = "UPDATE stock SET count=$diff WHERE id=$stockid";
+        $sql = "UPDATE $table SET count=$diff WHERE id=$stockid";
     } else {
         if (strlen($diff) == 0) {
             $diff = 1;
         }
-        $sql = "UPDATE stock SET count=count $operator $diff WHERE id=$stockid";
+        $sql = "UPDATE $table SET count=count $operator $diff WHERE id=$stockid";
     }
     if (strlen($diff) > 0) {
         $conn->query($sql);
@@ -101,7 +102,10 @@ if ($result && $result->num_rows > 0) {
             </tr>
         </table>
     </div>
+
     <?php
+
+    // Stock table
     $stockresult = $conn->query("SELECT stock.id, stock.sublocation, stock.count, locations.name as location FROM stock LEFT JOIN locations ON stock.location=locations.id WHERE stock.count > 0 AND stock.partId = " . $row["id"]);
     if ($stockresult && $stockresult->num_rows > 0) {
         ?>
@@ -111,7 +115,7 @@ if ($result && $result->num_rows > 0) {
                 <thead>
                 <tr>
                     <th>Locatie</th>
-                    <th>Vooraad</th>
+                    <th>Voorraad</th>
                     <th>Aanpassen</th>
                 </tr>
                 </thead>
@@ -119,13 +123,13 @@ if ($result && $result->num_rows > 0) {
                 <?php
                 while ($stockrow = $stockresult->fetch_assoc()) {
                     echo("<tr>\n");
-                    echo("    <td>\n");
-                    echo("    <b>" . $stockrow["location"] . " " . $stockrow["sublocation"] . "</b></td>\n");
+                    echo("    <td><b>" . $stockrow["location"] . " " . $stockrow["sublocation"] . "</b></td>\n");
                     echo("    <td><b>" . $stockrow["count"] . "</b></td>\n");
                     ?>
                     <td>
                         <form action="item.php" method="post">
                             <input type="hidden" name="id" value="<?php echo($id); ?>">
+                            <input type="hidden" name="table" value="stock">
                             <input type="hidden" name="stockid" value="<?php echo($stockrow["id"]); ?>">
                             <input style="width: 50px" name="adjust" type="submit" value="-"/>
                             <input style="width: 50px" name="diff" type="text" value=""/>
@@ -143,6 +147,7 @@ if ($result && $result->num_rows > 0) {
         </div>
         <?php
     }
+
     ?>
     <div>
         <h3>Voorraad toevoegen</h3>
@@ -155,6 +160,86 @@ if ($result && $result->num_rows > 0) {
         </form>
     </div>
     <?php
+
+    // Packed stock table
+    $stockresult = $conn->query("SELECT orderpart.part, orderpart.packed, orders.name, relations.name as relation 
+                                        FROM orderpart 
+                                        LEFT JOIN orders ON orderpart.orderId=orders.id 
+                                        LEFT JOIN relations ON relations.id=orders.relation 
+                                        WHERE orderpart.packed > 0 AND orderpart.part=" . $row["id"]);
+    if ($stockresult && $stockresult->num_rows > 0) {
+        ?>
+        <div>
+            <h3>Voorraad ingepakt voor verzending</h3>
+            <table class="styled-table">
+                <thead>
+                <tr>
+                    <th>Order</th>
+                    <th>Relatie</th>
+                    <th>Voorraad</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                while ($stockrow = $stockresult->fetch_assoc()) {
+                    echo("<tr>\n");
+                    echo("    <td><b>" . $stockrow["name"] . "</b></td>\n");
+                    echo("    <td><b>" . $stockrow["relation"] . "</b></td>\n");
+                    echo("    <td><b>" . $stockrow["packed"] . "</b></td>\n");
+                    echo("</tr>\n");
+                }
+
+                ?>
+                </tbody>
+            </table>
+        </div>
+        <?php
+    }
+
+    // External stock table
+    $stockresult = $conn->query("SELECT extstock.id, extstock.count, relations.name as location FROM extstock LEFT JOIN relations ON extstock.relation=relations.id WHERE extstock.count > 0 AND extstock.part = " . $row["id"]);
+    if ($stockresult && $stockresult->num_rows > 0) {
+        ?>
+        <div>
+            <h3>Externe voorraad</h3>
+            <table class="styled-table">
+                <thead>
+                <tr>
+                    <th>Locatie</th>
+                    <th>Voorraad</th>
+                    <th>Aanpassen</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                while ($stockrow = $stockresult->fetch_assoc()) {
+                    echo("<tr>\n");
+                    echo("    <td><b>" . $stockrow["location"] . "</b></td>\n");
+                    echo("    <td><b>" . $stockrow["count"] . "</b></td>\n");
+                    ?>
+                    <td>
+                        <form action="item.php" method="post">
+                            <input type="hidden" name="id" value="<?php echo($id); ?>">
+                            <input type="hidden" name="table" value="extstock">
+                            <input type="hidden" name="stockid" value="<?php echo($stockrow["id"]); ?>">
+                            <input style="width: 50px" name="adjust" type="submit" value="-"/>
+                            <input style="width: 50px" name="diff" type="text" value=""/>
+                            <input style="width: 50px" name="adjust" type="submit" value="="/>
+                            <input style="width: 50px" name="adjust" type="submit" value="+"/>
+                        </form>
+                    </td>
+                    <?php
+                    echo("</tr>\n");
+                }
+
+                ?>
+                </tbody>
+            </table>
+        </div>
+        <?php
+    }
+
+
     $sql = "SELECT partproject.count, projects.name, projects.id FROM partproject LEFT JOIN projects ON partproject.project = projects.id WHERE partproject.part=$id";
     $prresult = $conn->query($sql);
 

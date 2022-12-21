@@ -37,6 +37,7 @@ function printHeader($title): void
         addLink("types.php", "Types");
         addLink("units.php", "Units");
         addLink("add.php", "Toevoegen");
+        addLink("orders.php", "Orders");
         ?>
         <div class="search-container">
             <form action="search.php" method="post">
