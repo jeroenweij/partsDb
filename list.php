@@ -136,10 +136,10 @@ if ($sublocation > 0) {
     addCondition("parts.sublocation='$sublocation'");
 }
 if (isset($_POST["instock"])) {
-    addCondition("parts.stock > 0");
+    addCondition("stock.count > 0");
 }
 
-$sql = "SELECT parts.id, parts.name, parts.description, parts.stock, parts.value, parts.sublocation,
+$sql = "SELECT parts.id, parts.name, parts.description, stock.count, parts.value, stock.sublocation,
        types.name as type, 
        units.name as unit,
        packages.name as package,
@@ -149,7 +149,8 @@ $sql = "SELECT parts.id, parts.name, parts.description, parts.stock, parts.value
         LEFT JOIN types ON parts.type=types.id
         LEFT JOIN units ON parts.unit=units.id
         LEFT JOIN packages ON parts.package=packages.id
-        LEFT JOIN locations ON parts.location=locations.id
+        LEFT JOIN stock ON parts.id=stock.partId
+        LEFT JOIN locations ON stock.location=locations.id
         LEFT JOIN partproject ON parts.id=partproject.part
         LEFT JOIN projects ON partproject.project=projects.id";
 
@@ -157,7 +158,8 @@ $count = $conn->query("SELECT count(*) as c FROM parts
         LEFT JOIN types ON parts.type=types.id
         LEFT JOIN units ON parts.unit=units.id
         LEFT JOIN packages ON parts.package=packages.id
-        LEFT JOIN locations ON parts.location=locations.id
+        LEFT JOIN stock ON parts.id=stock.partId
+        LEFT JOIN locations ON stock.location=locations.id
         LEFT JOIN partproject ON parts.id=partproject.part
         LEFT JOIN projects ON partproject.project=projects.id $condition");
 if ($count) {
@@ -219,7 +221,7 @@ if ($result && $result->num_rows > 0) {
             } else {
                 echo("<td></td>\n");
             }
-            echo("<td>" . $row["stock"] . "</td>\n");
+            echo("<td>" . $row["count"] . "</td>\n");
 
 
             echo("</tr>\n");

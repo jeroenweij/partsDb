@@ -20,8 +20,8 @@ if (isset($_POST["mpn"])) {
     $tag = validateInput($_POST["tag"]);
 
     $query = "INSERT INTO `parts` 
-           (`name`,      `description`,  `type`,  `value`,   `stock`,  `package`,  `unit`,  `location`,  `sublocation`) 
-    VALUES ('$partNum', '$description', '$type', '$value',  '$stock', '$package', '$unit', '$location', '$sublocation')";
+           (`name`, `description`,  `type`,  `value`,  `package`,  `unit`) 
+    VALUES ('$partNum', '$description', '$type', '$value', '$package', '$unit')";
 
     if ($conn->query($query)) {
         echo("<h3>$partNum is toegevoegd.</h3>");
@@ -31,6 +31,11 @@ if (isset($_POST["mpn"])) {
             $row = $result->fetch_assoc();
             $partid = $row["id"];
             echo("<a href=\"item.php?id=$partid\">$partNum openen.</a>");
+
+            // Add stock
+            if ($stock > 0){
+                $conn->query("INSERT INTO `stock` (`partId`, `location`, `sublocation`, `count`) VALUES ('$partid', '$location', '$sublocation', '$stock');");
+            }
 
             // Add Tag
             if (strlen($tag) > 2) {

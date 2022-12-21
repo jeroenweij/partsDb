@@ -49,6 +49,9 @@ $refname = substr($table, 0, -1);
 if ($table == "projects") {
     $refdb = "partproject";
 }
+if ($table == "locations") {
+    $refdb = "stock";
+}
 $sql = "SELECT id, name, (SELECT COUNT(*) FROM $refdb WHERE $refdb.$refname = $table.id) AS ref FROM $table;";
 $result = $conn->query($sql);
 

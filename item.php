@@ -16,14 +16,15 @@ if (isset($_POST["id"])) {
 if (isset($_POST["diff"])) {
     $diff = validateNumberInput($_POST["diff"]);
     $operator = validateInput($_POST["adjust"]);
+    $stockid = validateNumberInput($_POST["stockid"]);
 
     if ($operator == "=") {
-        $sql = "UPDATE parts SET stock=$diff WHERE id=$id";
+        $sql = "UPDATE stock SET count=$diff WHERE id=$stockid";
     } else {
         if (strlen($diff) == 0) {
             $diff = 1;
         }
-        $sql = "UPDATE parts SET stock=stock $operator $diff WHERE id=$id";
+        $sql = "UPDATE stock SET count=count $operator $diff WHERE id=$stockid";
     }
     if (strlen($diff) > 0) {
         $conn->query($sql);
@@ -31,9 +32,16 @@ if (isset($_POST["diff"])) {
 }
 if (isset($_POST["select-locations"])) {
     $location = validateNumberInput($_POST["select-locations"]);
-    $sublocation = validateNumberInput($_POST["sublocation"]);
-    $sql = "UPDATE parts SET location=$location, sublocation=$sublocation WHERE id=$id";
-    $conn->query($sql);
+    $subloc = validateNumberInput($_POST["sublocation"]);
+    $count = validateNumberInput($_POST["count"]);
+    if ($location > 1) {
+        $conn->query("INSERT INTO stock (partId, location, sublocation, count) SELECT $id, $location, $subloc, 0
+        FROM DUAL WHERE NOT EXISTS (
+        SELECT count FROM stock WHERE partId = $id AND location = $location AND sublocation = $subloc);");
+
+        $sql = "UPDATE stock SET count=count + $count WHERE partId = $id AND location = $location AND sublocation = $subloc";
+        $conn->query($sql);
+    }
 }
 if (isset($_POST["del-project"])) {
     $project = validateNumberInput($_POST["del-project"]);
@@ -60,17 +68,14 @@ if (isset($_POST["select-projects"])) {
 }
 
 
-$sql = "SELECT parts.id, parts.name, parts.description, parts.stock, parts.value, parts.sublocation,
+$sql = "SELECT parts.id, parts.name, parts.description, parts.value,
        types.name as type, 
        units.name as unit,
-       packages.name as package,
-       locations.name as location,
-       locations.id as locid
+       packages.name as package
         FROM parts 
         LEFT JOIN types ON parts.type=types.id
         LEFT JOIN units ON parts.unit=units.id
         LEFT JOIN packages ON parts.package=packages.id
-        LEFT JOIN locations ON parts.location=locations.id
         WHERE parts.id='$id'";
 
 $result = $conn->query($sql);
@@ -81,53 +86,71 @@ if ($result && $result->num_rows > 0) {
     echo("<p>" . $row["description"] . "</p>");
     ?>
     <div style="height: 200px">
-        <div style="float: right">
-            <table>
+        <table>
+            <tr>
+                <td>categorie:</td>
+                <td><?php echo($row["type"]); ?></td>
+            </tr>
+            <tr>
+                <td>waarde:</td>
+                <td><?php echo($row["value"] . " " . $row["unit"]); ?></td>
+            </tr>
+            <tr>
+                <td>package:</td>
+                <td><?php echo($row["package"]); ?></td>
+            </tr>
+        </table>
+    </div>
+    <?php
+    $stockresult = $conn->query("SELECT stock.id, stock.sublocation, stock.count, locations.name as location FROM stock LEFT JOIN locations ON stock.location=locations.id WHERE stock.count > 0 AND stock.partId = " . $row["id"]);
+    if ($stockresult && $stockresult->num_rows > 0) {
+        ?>
+        <div>
+            <h3>Voorraad</h3>
+            <table class="styled-table">
+                <thead>
                 <tr>
-                    <th class="centercell twohndrdpx"><h3>Locatie</h3></th>
-                    <th class="centercell twohndrdpx"><h3>Vooraad</h3></th>
+                    <th>Locatie</th>
+                    <th>Vooraad</th>
+                    <th>Aanpassen</th>
                 </tr>
-                <tr>
-                    <td class="centercell twohndrdpx">
-                        <b><?php echo($row["location"] . " " . $row["sublocation"]); ?></b></td>
-                    <td class="centercell twohndrdpx"><b><?php echo($row["stock"]); ?></b></td>
-                </tr>
+                </thead>
+                <tbody>
+                <?php
+                while ($stockrow = $stockresult->fetch_assoc()) {
+                    echo("<tr>\n");
+                    echo("    <td>\n");
+                    echo("    <b>" . $stockrow["location"] . " " . $stockrow["sublocation"] . "</b></td>\n");
+                    echo("    <td><b>" . $stockrow["count"] . "</b></td>\n");
+                    ?>
+                    <td>
+                        <form action="item.php" method="post">
+                            <input type="hidden" name="id" value="<?php echo($id); ?>">
+                            <input type="hidden" name="stockid" value="<?php echo($stockrow["id"]); ?>">
+                            <input style="width: 50px" name="adjust" type="submit" value="-"/>
+                            <input style="width: 50px" name="diff" type="text" value=""/>
+                            <input style="width: 50px" name="adjust" type="submit" value="="/>
+                            <input style="width: 50px" name="adjust" type="submit" value="+"/>
+                        </form>
+                    </td>
+                    <?php
+                    echo("</tr>\n");
+                }
+
+                ?>
+                </tbody>
             </table>
         </div>
-        <div style="float: left">
-            <table>
-                <tr>
-                    <td>categorie:</td>
-                    <td><?php echo($row["type"]); ?></td>
-                </tr>
-                <tr>
-                    <td>waarde:</td>
-                    <td><?php echo($row["value"] . " " . $row["unit"]); ?></td>
-                </tr>
-                <tr>
-                    <td>package:</td>
-                    <td><?php echo($row["package"]); ?></td>
-                </tr>
-            </table>
-        </div>
-    </div>
+        <?php
+    }
+    ?>
     <div>
-        <br/>
-        <h3>Vooraad aanpassen</h3>
+        <h3>Voorraad toevoegen</h3>
         <form action="item.php" method="post">
             <input type="hidden" name="id" value="<?php echo($id); ?>">
-            <input style="width: 50px" name="adjust" type="submit" value="-"/>
-            <input name="diff" type="text" value=""/>
-            <input style="width: 50px" name="adjust" type="submit" value="="/>
-            <input style="width: 50px" name="adjust" type="submit" value="+"/>
-        </form>
-    </div>
-    <div>
-        <h3>Lokatie aanpassen</h3>
-        <form action="item.php" method="post">
-            <input type="hidden" name="id" value="<?php echo($id); ?>">
-            <?php printSelect("locations", $row["locid"]);
-            printSublocaton($row["sublocation"]); ?>
+            <?php printSelect("locations", 0);
+            printSublocaton(0); ?>
+            <input style="width: 100px" name="count" type="text" value="1"/>
             <input name="opslaan" type="submit" value="Opslaan"/>
         </form>
     </div>
@@ -177,38 +200,38 @@ if ($result && $result->num_rows > 0) {
             <input name="opslaan" type="submit" value="Link"/>
         </form>
     </div>
-        <?php
-        $sql = "SELECT tag FROM tags WHERE part=$id";
-        $tresult = $conn->query($sql);
+    <?php
+    $sql = "SELECT tag FROM tags WHERE part=$id";
+    $tresult = $conn->query($sql);
 
-        if ($tresult && $tresult->num_rows > 0) {
+    if ($tresult && $tresult->num_rows > 0) {
         ?>
-    <div>
+        <div>
             <h3>Tags</h3>
-        <table class="styled-table">
-            <thead>
-            <tr>
-                <th>Tag</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <?php
-            while ($prrow = $tresult->fetch_assoc()) {
-                echo("<tr>\n");
-                echo("<td>" . $prrow["tag"] . "</td>\n");
-                echo("<td><form action=\"item.php\" method=\"post\">\n");
-                echo("<input type=\"hidden\" name=\"id\" value=\"$id\">\n");
-                echo("<input type=\"hidden\" name=\"del-tag\" value=\"" . $prrow["tag"] . "\">\n");
-                echo("<input name=\"delete\" type=\"submit\" value=\"Delete\"  onclick=\"return confirm('Weet je het zeker?')\" />\n");
-                echo("</form></td>\n");
-                echo("</tr>\n");
-            }
-            ?>
-            </tbody>
-        </table>
-    </div>
-<?php } ?>
+            <table class="styled-table">
+                <thead>
+                <tr>
+                    <th>Tag</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                while ($prrow = $tresult->fetch_assoc()) {
+                    echo("<tr>\n");
+                    echo("<td>" . $prrow["tag"] . "</td>\n");
+                    echo("<td><form action=\"item.php\" method=\"post\">\n");
+                    echo("<input type=\"hidden\" name=\"id\" value=\"$id\">\n");
+                    echo("<input type=\"hidden\" name=\"del-tag\" value=\"" . $prrow["tag"] . "\">\n");
+                    echo("<input name=\"delete\" type=\"submit\" value=\"Delete\"  onclick=\"return confirm('Weet je het zeker?')\" />\n");
+                    echo("</form></td>\n");
+                    echo("</tr>\n");
+                }
+                ?>
+                </tbody>
+            </table>
+        </div>
+    <?php } ?>
     <div>
         <h3>Tag toevoegen</h3>
 
