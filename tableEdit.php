@@ -63,7 +63,7 @@ if ($result && $result->num_rows > 0) {
             <th>ID</th>
             <th>naam</th>
             <th>aantal keer gebruikt</th>
-            <th>componernten</th>
+            <th>componenten</th>
             <th>aanpassen</th>
             <th>verwijderen</th>
         </tr>

@@ -65,7 +65,7 @@ if (isset($_POST["select-projects"])) {
         $diff = $count - $oldcount;
 
         // add $diff * parts
-        $sql = "SELECT parts.id, partproject.count FROM parts LEFT JOIN partproject ON partproject.part=parts.id WHERE partproject.project=$project;";
+        $sql = "SELECT parts.id, partproject.count FROM parts LEFT JOIN partproject ON partproject.part=parts.id WHERE deleted=0 AND partproject.project=$project;";
         $result = $conn->query($sql);
         if ($result && $result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
@@ -185,7 +185,7 @@ if ($result && $result->num_rows > 0) {
         (SELECT SUM(count) FROM extstock WHERE extstock.part=parts.id AND extstock.relation=".$row["relationid"].") as extstock
             FROM parts 
             LEFT JOIN orderpart ON orderpart.part=parts.id 
-            WHERE orderpart.orderId=$id";
+            WHERE parts.deleted=0 AND orderpart.orderId=$id";
     $result = $conn->query($sql);
     if ($result && $result->num_rows > 0) {
         ?>

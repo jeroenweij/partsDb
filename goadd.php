@@ -14,9 +14,11 @@ printHeader("Toevoegen");
 
 // Check item already exists in the database
 $itemExists = null;
-$sql = "SELECT parts.id FROM parts ";
-$where = "WHERE parts.name = \"$input\"";
-$itemExists = $conn->query($sql . $where);
+$sql = "SELECT parts.id, parts.name, parts.description, types.name as type FROM parts LEFT JOIN types ON parts.type=types.id ";
+if (!isset($_POST["force"])) {
+    $where = "WHERE parts.deleted=0 AND parts.name = \"$input\" OR parts.name LIKE \"%" . substr($input, 0, -1) . "%\"";
+    $itemExists = $conn->query($sql . $where);
+}
 
 function isMatch($parent, $category, $specName)
 {
@@ -158,11 +160,12 @@ $location = stringToId("locations", $location);
 
 require('formFunctions.php');
 if ($input != $mpn) {
-    if (!$itemExists || $itemExists->num_rows == 0) {
-        $where = "WHERE parts.name = \"$mpn\"";
-        $itemExists = $conn->query($sql . $where);
+    if (!isset($_POST["force"])) {
+        if (!$itemExists || $itemExists->num_rows == 0) {
+            $where = "WHERE parts.deleted=0 AND parts.name = \"$mpn\" OR parts.name LIKE \"%" . substr($mpn, 0, -1) . "%\"";
+            $itemExists = $conn->query($sql . $where);
+        }
     }
-
     echo("<h2 style='color: #ff0000'>\"$input\" niet gevonden. bedoelde je: \"$mpn\"?</h2>");
 }
 
@@ -170,12 +173,44 @@ if ($input != $mpn) {
 if ($itemExists && $itemExists->num_rows > 0) {
     ?>
     <h2>Er bestaat al een item met deze naam:</h2>
+    <table class="styled-table">
+        <thead>
+        <tr>
+            <th>Naam</th>
+            <th>Beschrijving</th>
+            <th>Type</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php
+        $maxDesc = 50;
+        while ($row = $itemExists->fetch_assoc()) {
+            echo("<tr class='border'>\n");
+            $id = $row["id"];
+            echo("<td><a href='item.php?id=$id' >" . $row["name"] . "</a></td>\n");
+            if ($row["description"]) {
+                if (strlen($row["description"]) > $maxDesc) {
+                    echo("<td>" . substr($row["description"], 0, $maxDesc - 3) . "...</td>\n");
+                } else {
+                    echo("<td>" . $row["description"] . "</td>\n");
+                }
+            } else {
+                echo("<td></td>\n");
+            }
+            echo("<td>" . $row["type"] . "</td>\n");
+            echo("</tr>\n");
+        }
+        ?>
+        </tbody>
+    </table>
+    <form id="itemForm" action="goadd.php" method="post">
+        <input type="hidden" name="force" value="true">
+        <input type="hidden" name="q" value="<?php echo($input); ?>">
+        <input name="submit" type="submit" value="nieuw item toevoegen"/>
+    </form>
+
     <?php
-    if ($row = $itemExists->fetch_assoc()) {
-        $id = $row["id"];
-        header("Location: item.php?id=$id");
-        exit();
-    }
+
     printFooter();
     exit();
 }

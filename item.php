@@ -44,6 +44,19 @@ if (isset($_POST["select-locations"])) {
         $conn->query($sql);
     }
 }
+
+if (isset($_POST["select-relations"])) {
+    $relation= validateNumberInput($_POST["select-relations"]);
+    $count = validateNumberInput($_POST["count"]);
+
+        $conn->query("INSERT INTO extstock (part, relation, count) SELECT $id, $relation, 0
+        FROM DUAL WHERE NOT EXISTS (
+        SELECT count FROM extstock WHERE part = $id AND relation = $relation);");
+
+        $sql = "UPDATE extstock SET count=count + $count WHERE part=$id AND relation=$relation";
+        $conn->query($sql);
+}
+
 if (isset($_POST["del-project"])) {
     $project = validateNumberInput($_POST["del-project"]);
     $conn->query("DELETE FROM partproject WHERE part = $id AND project = $project;");

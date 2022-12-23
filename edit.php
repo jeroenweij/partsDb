@@ -14,11 +14,12 @@ if (isset($_POST["mpn"])){
     $value = validateNumberInput($_POST["value"]);
     $package = validateNumberInput($_POST["select-packages"]);
     $unit = validateNumberInput($_POST["select-units"]);
+    $deleted = isset($_POST["deleted"]) ? 1 : 0;
 
-    if (strlen($partNum) > 0 && strlen($description)>0) {
+    if (strlen($partNum) > 0 && strlen($description) > 0) {
         $sql = "UPDATE parts SET 
                  name='$partNum', description='$description', type='$type', value='$value', unit='$unit', 
-                 package='$package'
+                 package='$package', deleted='$deleted'
              WHERE parts.id = " . $_POST["id"];
         $conn->query($sql);
     }
@@ -45,6 +46,7 @@ $category = $part["type"];
 $value = $part["value"];
 $valueUnit = $part["unit"];
 $package = $part["package"];
+$deleted = $part["deleted"] == 1 ? "checked" : "";
 
 require('formFunctions.php');
 
@@ -77,10 +79,25 @@ require('formFunctions.php');
                 <td>Package:</td>
                 <td><?php printSelect("packages", $package); ?></td>
             </tr>
+            <tr>
+                <td>Verwijderd:</td>
+                <td><input type="checkbox" name="deleted" <?php echo($deleted);?> /></td>
+            </tr>
         </table>
 
         <input name="submit" type="submit" value="Opslaan"/>
     </form>
+<br>
+    <div>
+        <h3>Externe voorraad toevoegen</h3>
+        <form action="item.php" method="post">
+            <input type="hidden" name="id" value="<?php echo($part["id"]); ?>">
+            <?php printSelect("relations", 0); ?>
+            <input style="width: 100px" name="count" type="text" value="1"/>
+            <input name="opslaan" type="submit" value="Opslaan"/>
+        </form>
+    </div>
+<br>
     <form action="item.php" method="post">
         <input type="hidden" name="id" value="<?php echo($part["id"]); ?>" />
         <input name="submit" type="submit" value="Terug"/>

@@ -14,7 +14,7 @@ printHeader("Zoeken");
 
 
     $condition = "";
-    $sql = "SELECT parts.id FROM parts WHERE";
+    $sql = "SELECT parts.id FROM parts WHERE parts.deleted=0 AND";
 
     $result = $conn->query("SELECT part FROM tags WHERE tag='$input'");
     if ($result && $result->num_rows > 0) {
@@ -29,11 +29,12 @@ printHeader("Zoeken");
     }
 
     if ($result && $result->num_rows == 0) {
-        $query = " parts.name LIKE\"%$input%\"";
+        $query = " parts.name LIKE \"%$input%\" OR parts.name LIKE \"%" . substr($input, 0, -1) . "%\"";
         $result = $conn->query($sql . $query);
     }
+
     if ($result && $result->num_rows == 0) {
-        $query = " parts.description LIKE\"%$input%\"";
+        $query = " parts.description LIKE \"%$input%\" OR parts.description LIKE \"%" . substr($input, 0, -1) . "%\"";
         $result = $conn->query($sql . $query);
     }
 

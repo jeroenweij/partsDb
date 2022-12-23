@@ -104,12 +104,7 @@ $condition = "";
 function addCondition($new)
 {
     global $condition;
-    if (strlen($condition) > 0) {
-        $condition = $condition . " AND ";
-    } else {
-        $condition = " WHERE ";
-    }
-    $condition = $condition . $new;
+    $condition = $condition . " AND " . $new;
 }
 
 if (strlen($input) > 0) {
@@ -152,7 +147,8 @@ $sql = "SELECT parts.id, parts.name, parts.description, stock.count, parts.value
         LEFT JOIN stock ON parts.id=stock.partId
         LEFT JOIN locations ON stock.location=locations.id
         LEFT JOIN partproject ON parts.id=partproject.part
-        LEFT JOIN projects ON partproject.project=projects.id";
+        LEFT JOIN projects ON partproject.project=projects.id
+        WHERE deleted=0";
 
 $count = $conn->query("SELECT count(*) as c FROM parts 
         LEFT JOIN types ON parts.type=types.id
@@ -161,7 +157,8 @@ $count = $conn->query("SELECT count(*) as c FROM parts
         LEFT JOIN stock ON parts.id=stock.partId
         LEFT JOIN locations ON stock.location=locations.id
         LEFT JOIN partproject ON parts.id=partproject.part
-        LEFT JOIN projects ON partproject.project=projects.id $condition");
+        LEFT JOIN projects ON partproject.project=projects.id
+        WHERE deleted=0 $condition");
 if ($count) {
     $count = $count->fetch_assoc();
     $count = $count["c"];

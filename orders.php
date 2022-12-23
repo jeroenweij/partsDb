@@ -30,7 +30,37 @@ $sql = "SELECT orders.id, orders.name,
         LEFT JOIN companys ON orders.company=companys.id
         LEFT JOIN statuses ON orders.status=statuses.id";
 
-$count = $conn->query("SELECT count(*) as c FROM orders");
+$condition = "";
+function addCondition($new)
+{
+    global $condition;
+    if (strlen($condition) > 0) {
+        $condition = $condition . " AND ";
+    } else {
+        $condition = " WHERE ";
+    }
+    $condition = $condition . $new;
+}
+function checkSelected($item)
+{
+    $itemname = "view-$item";
+    if (isset($_POST[$itemname])) {
+        $selectedValue = $_POST[$itemname];
+        if ($selectedValue > 0) {
+            addCondition("$item.id='$selectedValue'");
+        }
+    }
+}
+
+checkSelected("relations");
+checkSelected("companys");
+checkSelected("statuses");
+
+$count = $conn->query("SELECT count(*) as c FROM orders 
+        LEFT JOIN relations ON orders.relation=relations.id
+        LEFT JOIN companys ON orders.company=companys.id
+        LEFT JOIN statuses ON orders.status=statuses.id
+        $condition");
 if ($count) {
     $count = $count->fetch_assoc();
     $count = $count["c"];
@@ -40,7 +70,7 @@ if ($pageNum * $pageLimit > $count) {
     $pageNum = 0;
 }
 
-$sql = $sql . " ORDER BY orders.id ASC LIMIT $pageLimit";
+$sql = $sql . "$condition ORDER BY orders.id ASC LIMIT $pageLimit";
 $sql = $sql . " OFFSET " . ($pageLimit * $pageNum);
 
 $result = $conn->query($sql);
@@ -89,6 +119,17 @@ if ($result && $result->num_rows > 0) {
     <div style="float: right">
     <form action="" method="post">
         <?php
+        function addFilter($name)
+        {
+            if (isset($_POST[$name])) {
+                echo("<input type=\"hidden\" name=\"$name\" value=\"" . $_POST[$name] . "\" />\n");
+            }
+        }
+
+        addFilter("view-relations");
+        addFilter("view-companys");
+        addFilter("view-statuses");
+
         if ($count > $pageLimit) {
             $pages = ceil($count / $pageLimit);
             echo('<label>Pagina<select name="pageNum">');
