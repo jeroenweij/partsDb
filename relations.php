@@ -9,9 +9,7 @@ if (isset($_POST["new"]) && strlen($_POST["name"]) > 0) {
     $newName = $_POST["name"];
     $contact = $_POST["contact"];
     $address = $_POST["address"];
-    $sql = "INSERT INTO relations (name, contact, address) SELECT $newName, $contact, $address
-        FROM DUAL WHERE NOT EXISTS (
-        SELECT name FROM relations WHERE name = $newName AND contact = $contact);";
+    $sql = "INSERT INTO `relations` (`id`, `name`, `contact`, `address`) VALUES (NULL, '$newName', '$contact', '$address');";
     $conn->query($sql);
 }
 

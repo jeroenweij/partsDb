@@ -119,6 +119,13 @@ input[type=text]{
      background-color: #f3f3f3;
 }
 
+.styled-table tbody tr.even {
+     background-color: #f3f3f3;
+}
+.styled-table tbody tr.odd {
+     background-color: #FFFFFF;
+}
+
 .styled-table tbody tr:last-of-type {
      border-bottom: 2px solid #009879;
 }

@@ -28,6 +28,7 @@ function addPart($part, $count)
         SELECT count FROM orderpart WHERE orderId = $id AND part = $part);");
     $conn->query("UPDATE orderpart SET count = count + $count WHERE orderId = $id AND part = $part;");
 }
+
 function removePart($part, $count)
 {
     global $id;
@@ -39,7 +40,7 @@ function removePart($part, $count)
         $row = $result->fetch_assoc();
         $oldcount = $row["count"];
     }
-    $newcount= max($oldcount - $count,0);
+    $newcount = max($oldcount - $count, 0);
     $conn->query("UPDATE orderpart SET count=$newcount WHERE orderId = $id AND part = $part;");
 }
 
@@ -47,7 +48,7 @@ if (isset($_POST["select-projects"])) {
     $project = validateNumberInput($_POST["select-projects"]);
     $count = validateNumberInput($_POST["count"]);
     if (strlen($count) == 0) {
-        $count = 1;
+        $count = 0;
     }
     $oldcount = 0;
     $result = $conn->query("SELECT count FROM orderproject WHERE orderId = $id AND project = $project;");
@@ -89,6 +90,7 @@ if (isset($_POST["select-projects"])) {
 
 $sql = "SELECT orders.id, orders.name,
        companys.name as company,
+       companys.id as companyid,
        relations.name as relation,
        relations.id as relationid,
        statuses.name as status,
@@ -126,7 +128,7 @@ if ($result && $result->num_rows > 0) {
     $sql = "SELECT orderproject.count, projects.name, projects.id 
             FROM orderproject 
             LEFT JOIN projects ON orderproject.project = projects.id 
-            WHERE orderproject.orderId=$id";
+            WHERE count > 0 AND orderproject.orderId=$id";
     $result = $conn->query($sql);
     if ($result && $result->num_rows > 0) {
         ?>
@@ -182,11 +184,12 @@ if ($result && $result->num_rows > 0) {
     // List parts
     $sql = "SELECT parts.id, parts.name, orderpart.count, orderpart.packed, 
         (SELECT SUM(count) FROM stock WHERE stock.partId=parts.id) as stock,
-        (SELECT SUM(count) FROM extstock WHERE extstock.part=parts.id AND extstock.relation=".$row["relationid"].") as extstock
+        (SELECT SUM(count) FROM extstock WHERE extstock.part=parts.id AND extstock.relation=" . $row["relationid"] . ") as extstock
             FROM parts 
             LEFT JOIN orderpart ON orderpart.part=parts.id 
-            WHERE parts.deleted=0 AND orderpart.orderId=$id";
+            WHERE orderpart.count > 0 AND parts.deleted=0 AND orderpart.orderId=$id";
     $result = $conn->query($sql);
+    $componentcount = 0;
     if ($result && $result->num_rows > 0) {
         ?>
 
@@ -206,8 +209,9 @@ if ($result && $result->num_rows > 0) {
                 <tbody>
                 <?php
                 while ($prow = $result->fetch_assoc()) {
+                    $componentcount++;
                     $pid = $prow["id"];
-                    $short = max($prow["count"] - ($prow["stock"] + $prow["extstock"] + $prow["packed"]),0);
+                    $short = max($prow["count"] - ($prow["stock"] + $prow["extstock"] + $prow["packed"]), 0);
                     echo("<tr>\n");
                     echo("<td><a href='item.php?id=$pid'>" . $prow["name"] . "</a></td>\n");
                     echo("<td>" . $prow["count"] . "</td>\n");
@@ -225,14 +229,58 @@ if ($result && $result->num_rows > 0) {
         <?php
     }
 
-    if ($row["statusid"] == 1) { ?>
-        <form action="order.php" method="post">
-            <input type="hidden" name="id" value="<?php echo($id); ?>" />
-            <input type="hidden" name="newstatus" value="2" />
-            <input name="next" type="submit" value="Naar componenten verzamelen" onclick="return confirm('Weet je het zeker?\nje kan niet meer terug')" />
-        </form>
-    <?php
+    if ($row["statusid"] == 1 && $componentcount > 0) { ?>
+        <br>
+        <div>
+            <form action="order.php" method="post">
+                <input type="hidden" name="id" value="<?php echo($id); ?>"/>
+                <input type="hidden" name="newstatus" value="2"/>
+                <input name="next" type="submit" value="Naar componenten verzamelen"
+                       onclick="return confirm('Weet je het zeker?\nje kan niet meer terug')"/>
+            </form>
+        </div>
+        <?php
+    } else if ($row["statusid"] == 2) { ?>
+        <br>
+        <div>
+            <table>
+                <tr>
+                    <td>
+                        <form action="orderpicking.php" method="post">
+                            <input type="hidden" name="id" value="<?php echo($id); ?>"/>
+                            <input name="next" type="submit" value="Naar componenten inpakken"/>
+                        </form>
+                    </td>
+                    <td>
+                        <form action="generatepicklist.php" method="post" target="_blank">
+                            <input type="hidden" name="id" value="<?php echo($id); ?>"/>
+                            <input name="next" type="submit" value="Pick lijst printen"/>
+                        </form>
+                    </td>
+                    <td>
+                        <form action="generatepackinglist.php" method="post" target="_blank">
+                            <input type="hidden" name="id" value="<?php echo($id); ?>"/>
+                            <input name="next" type="submit" value="Pakbon printen"/>
+                        </form>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <?php
     }
+
+    ?>
+    <div>
+        <h3>Order aanpassen</h3>
+        <form action="neworder.php" method="post">
+            <input type="hidden" name="edit-id" value="<?php echo($id); ?>">
+            <input type="hidden" name="oldname" value="<?php echo($row["name"]); ?>">
+            <input type="hidden" name="oldcompany" value="<?php echo($row["companyid"]); ?>">
+            <input type="hidden" name="oldrelation" value="<?php echo($row["relationid"]); ?>">
+            <input name="opslaan" type="submit" value="Aanpassen"/>
+        </form>
+    </div>
+    <?php
     printFooter();
 } else {
     // Invalid id

@@ -78,7 +78,8 @@ $result = $conn->query($sql);
 $maxLen = 25;
 if ($result && $result->num_rows > 0) {
     ?>
-        <a href="neworder.php">Nieuwe order</a>
+    <a href="neworder.php">Nieuwe order aanmaken</a><br>
+    <a href="relations.php">Relaties beheren</a><br>
     <br/>
     <table class="styled-table">
         <thead>

@@ -13,6 +13,11 @@ if (isset($_POST["id"])) {
     $id = $_GET["id"];
 }
 
+if (isset($_POST["del-id"])) {
+    $sql = "UPDATE stock SET deleted=1 WHERE id=" . $_POST["del-id"];
+    $conn->query($sql);
+}
+
 if (isset($_POST["diff"])) {
     $diff = validateNumberInput($_POST["diff"]);
     $operator = validateInput($_POST["adjust"]);
@@ -40,21 +45,21 @@ if (isset($_POST["select-locations"])) {
         FROM DUAL WHERE NOT EXISTS (
         SELECT count FROM stock WHERE partId = $id AND location = $location AND sublocation = $subloc);");
 
-        $sql = "UPDATE stock SET count=count + $count WHERE partId = $id AND location = $location AND sublocation = $subloc";
+        $sql = "UPDATE stock SET count=count + $count, deleted=0 WHERE partId = $id AND location = $location AND sublocation = $subloc";
         $conn->query($sql);
     }
 }
 
 if (isset($_POST["select-relations"])) {
-    $relation= validateNumberInput($_POST["select-relations"]);
+    $relation = validateNumberInput($_POST["select-relations"]);
     $count = validateNumberInput($_POST["count"]);
 
-        $conn->query("INSERT INTO extstock (part, relation, count) SELECT $id, $relation, 0
+    $conn->query("INSERT INTO extstock (part, relation, count) SELECT $id, $relation, 0
         FROM DUAL WHERE NOT EXISTS (
         SELECT count FROM extstock WHERE part = $id AND relation = $relation);");
 
-        $sql = "UPDATE extstock SET count=count + $count WHERE part=$id AND relation=$relation";
-        $conn->query($sql);
+    $sql = "UPDATE extstock SET count=count + $count WHERE part=$id AND relation=$relation";
+    $conn->query($sql);
 }
 
 if (isset($_POST["del-project"])) {
@@ -119,7 +124,7 @@ if ($result && $result->num_rows > 0) {
     <?php
 
     // Stock table
-    $stockresult = $conn->query("SELECT stock.id, stock.sublocation, stock.count, locations.name as location FROM stock LEFT JOIN locations ON stock.location=locations.id WHERE stock.count > 0 AND stock.partId = " . $row["id"]);
+    $stockresult = $conn->query("SELECT stock.id, stock.sublocation, stock.count, locations.name as location FROM stock LEFT JOIN locations ON stock.location=locations.id WHERE (stock.deleted=0 OR stock.count>0) AND stock.partId = " . $row["id"]);
     if ($stockresult && $stockresult->num_rows > 0) {
         ?>
         <div>
@@ -130,6 +135,7 @@ if ($result && $result->num_rows > 0) {
                     <th>Locatie</th>
                     <th>Voorraad</th>
                     <th>Aanpassen</th>
+                    <th>Verbergen</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -149,6 +155,15 @@ if ($result && $result->num_rows > 0) {
                             <input style="width: 50px" name="adjust" type="submit" value="="/>
                             <input style="width: 50px" name="adjust" type="submit" value="+"/>
                         </form>
+                    </td>
+                    <td>
+                        <?php if ($stockrow["count"] == 0) { ?>
+                            <form method="post">
+                                <input type="hidden" name="del-id" value="<?php echo($stockrow["id"]); ?>"/>
+                                <input name="delete" type="submit" value="Verbergen"
+                                       onclick="return confirm('Weet je het zeker?')"/>
+                            </form>
+                        <?php } ?>
                     </td>
                     <?php
                     echo("</tr>\n");
@@ -343,7 +358,7 @@ if ($result && $result->num_rows > 0) {
         <h3>Component aanpassen</h3>
         <form action="edit.php" method="post">
             <input type="hidden" name="id" value="<?php echo($id); ?>">
-            <input name="opslaan" type="submit" value="Edit"/>
+            <input name="opslaan" type="submit" value="Aanpassen"/>
         </form>
     </div>
     <?php
