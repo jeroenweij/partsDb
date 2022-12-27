@@ -148,7 +148,7 @@ $sql = "SELECT parts.id, parts.name, parts.description, stock.count, parts.value
         LEFT JOIN locations ON stock.location=locations.id
         LEFT JOIN partproject ON parts.id=partproject.part
         LEFT JOIN projects ON partproject.project=projects.id
-        WHERE deleted=0";
+        WHERE parts.deleted=0";
 
 $count = $conn->query("SELECT count(*) as c FROM parts 
         LEFT JOIN types ON parts.type=types.id
@@ -158,7 +158,7 @@ $count = $conn->query("SELECT count(*) as c FROM parts
         LEFT JOIN locations ON stock.location=locations.id
         LEFT JOIN partproject ON parts.id=partproject.part
         LEFT JOIN projects ON partproject.project=projects.id
-        WHERE deleted=0 $condition");
+        WHERE parts.deleted=0 $condition");
 if ($count) {
     $count = $count->fetch_assoc();
     $count = $count["c"];
