@@ -54,6 +54,7 @@ $dompdf->setPaper("A4", "portret");
 $html = "<!DOCTYPE html>
 <html>
 <head>
+    <title>Pakbon</title>
     <meta charset=\"UTF-8\">
     <link rel=\"stylesheet\" href=\"css/gutenberg.min.css\">
     <style>
@@ -64,42 +65,65 @@ table {
     text-align: center;
             font-style: italic;
         }
+        
+        .nostyle {
+            border-bottom: 0px;
+            padding: 0px;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
 <div style='float: right'> <img style='width:200px' src='extimg/" . $row["logo"] . "'></div>
     <h1>Pakbon</h1>
-    <b>" . $row["companyname"] . "</b>
-    <pre>" . $row["companyaddress"] . "</pre>
     <b>" . $row["relationname"] . "</b>
-    <pre>" . $row["contact"] . "\n" . $row["relationaddress"] . "</pre>
+    <p>" . $row["contact"] . "<br>\n" . str_replace("\n", "<br>\n", $row["relationaddress"]) . "</p>
+    <table class='nostyle'>
+        <tr>
+            <td class='nostyle' style='width: 120px'>Pakbon</td>
+            <td class='nostyle' style='width: 300px'>" . date("ym") . sprintf('%04d', $id)."</td>
+            <td class='nostyle'>" . $row["companyname"] . "</td>
+        </tr>
+        <tr>
+            <td class='nostyle'>Datum</td>
+            <td class='nostyle'>" . date("d-m-Y") . "</td>
+            <td class='nostyle' rowspan='3'>" . str_replace("\n", "<br>\n", $row["companyaddress"]) . "</td>
+        </tr>
+        <tr>
+            <td class='nostyle'>Order</td>
+            <td class='nostyle'>" . $row["name"] . "</td>
+        </tr>
+        <tr>
+            <td class='nostyle'>&nbsp;</td>
+            <td class='nostyle'></td>
+        </tr>
+    </table>
     <table>
         <thead>
             <tr>
-                <th style='text-align: left'>Component</th>
-                <th style='text-align: left'>Aantal nodig</th>
-                <th style='text-align: left'>Bij julie op voorraad</th>
-                <th style='text-align: left'>In deze zending</th>
+                <th style='text-align: left'>#</th>
+                <th style='text-align: left'>Aantal</th>
+                <th style='text-align: left'>Beschrijving</th>
             </tr>
         </thead>
         <tbody>";
 
 // List parts
-$sql = "SELECT parts.name, orderpart.count, orderpart.packed, 
-        (SELECT SUM(count) FROM extstock WHERE extstock.part=parts.id AND extstock.relation=" . $row["relation"] . ") as extstock
+$sql = "SELECT parts.name, orderpart.count, orderpart.packed
             FROM parts 
             LEFT JOIN orderpart ON orderpart.part=parts.id 
             WHERE orderpart.count > 0 AND parts.deleted=0 AND orderpart.orderId=$id";
 $result = $conn->query($sql);
 
 if ($result && $result->num_rows > 0) {
+    $i=1;
     while ($prow = $result->fetch_assoc()) {
         $html=$html."<tr>\n";
-        $html=$html."<td>" . $prow["name"] . "</td>\n";
+        $html=$html."<td>" . $i . "</td>\n";
         $html=$html."<td>" . $prow["count"] . "</td>\n";
-        $html=$html."<td>" . $prow["extstock"] . "</td>\n";
-        $html=$html."<td>" . $prow["packed"] . "</td>\n";
+        $html=$html."<td>" . $prow["name"] . "</td>\n";
         $html=$html."</tr>\n";
+        $i++;
     }
 }
 

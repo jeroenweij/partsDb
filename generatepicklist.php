@@ -46,6 +46,7 @@ $dompdf->setPaper("A4", "portret");
 $html = "<!DOCTYPE html>
 <html>
 <head>
+    <title>Picklijst</title>
     <meta charset=\"UTF-8\">
     <link rel=\"stylesheet\" href=\"css/gutenberg.min.css\">
     <style>
@@ -59,16 +60,16 @@ table {
     </style>
 </head>
 <body>
-    <h1>".$row["name"]."</h1>
+    <h1>" . $row["name"] . "</h1>
     
     <table>
         <thead>
             <tr>
-                <th>Component</th>
-                <th>Aantal nodig</th>
-                <th>Lokatie</th>
-                <th>Voorraad</th>
-                <th>Aantal ingepakt</th>
+                <th style='text-align: left'>Component</th>
+                <th style='text-align: left'>Aantal nodig</th>
+                <th style='text-align: left'>Lokatie</th>
+                <th style='text-align: left'>Voorraad</th>
+                <th style='text-align: left'>Aantal ingepakt</th>
             </tr>
         </thead>
         <tbody>";
@@ -93,36 +94,36 @@ if ($result && $result->num_rows > 0) {
                         WHERE stock.count>0 AND stock.partId=$pid;";
         $stockresult = $conn->query($sql);
 
-        $rowspan=1;
+        $rowspan = 1;
         if ($stockresult && $stockresult->num_rows > 0) {
             $rowspan = $stockresult->num_rows;
         }
-        $html=$html."<tr>\n";
-        $html=$html."<td rowspan='$rowspan'><a href='item.php?id=$pid'>" . $prow["name"] . "</a></td>\n";
-        $html=$html."<td rowspan='$rowspan'>$short</td>\n";
+        $html = $html . "<tr>\n";
+        $html = $html . "<td rowspan='$rowspan'><a href='item.php?id=$pid'>" . $prow["name"] . "</a></td>\n";
+        $html = $html . "<td rowspan='$rowspan'>$short</td>\n";
 
         if ($stockresult && $stockresult->num_rows > 0) {
-            $addtr=false;
+            $addtr = false;
             while ($stockrow = $stockresult->fetch_assoc()) {
-                if ($addtr){
-                    echo("<tr>\n");
+                if ($addtr) {
+                    $html = $html . "<tr>\n";
                 }
-                $html=$html."<td>" . $stockrow["location"] . " " . $stockrow["sublocation"] . "</td>\n";
-                $html=$html."<td>" . $stockrow["count"] . "</td>\n";
-                $html=$html."<td>_____</td>\n";
-                $html=$html."</tr>\n";
-                $addtr=true;
+                $html = $html . "<td>" . $stockrow["location"] . " " . $stockrow["sublocation"] . "</td>\n";
+                $html = $html . "<td>" . $stockrow["count"] . "</td>\n";
+                $html = $html . "<td>_____</td>\n";
+                $html = $html . "</tr>\n";
+                $addtr = true;
             }
 
         } else {
-            $html=$html."<td>-</td><td>0</td><td>_____</td></tr>";
+            $html = $html . "<td>-</td><td>0</td><td>_____</td></tr>";
         }
 
     }
 }
 
-$html=$html."</tbody></table>";
-$html=$html."</body></html>";
+$html = $html . "</tbody></table>";
+$html = $html . "</body></html>";
 
 $dompdf->loadHtml($html);
 
@@ -137,3 +138,4 @@ $dompdf->addInfo("Title", "Picklijst"); // "add_info" in earlier versions of Dom
  * Send the PDF to the browser
  */
 $dompdf->stream("Picklijst.pdf", ["Attachment" => 0]);
+//echo($html);
