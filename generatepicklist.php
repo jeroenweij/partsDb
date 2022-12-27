@@ -85,7 +85,7 @@ $result = $conn->query($sql);
 if ($result && $result->num_rows > 0) {
     while ($prow = $result->fetch_assoc()) {
         $pid = $prow["id"];
-        $short = max($prow["count"] - ($prow["stock"] + $prow["extstock"] + $prow["packed"]), 0);
+        $short = max($prow["count"] - ($prow["extstock"] + $prow["packed"]), 0);
 
         $sql = "SELECT count, sublocation, locations.name as location
                         FROM `stock` 
