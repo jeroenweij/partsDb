@@ -181,6 +181,15 @@ if ($result && $result->num_rows > 0) {
 
 
     <?php
+
+    function echoif($status, $text)
+    {
+        global $row;
+        if (in_array($row["statusid"], $status)) {
+            echo($text);
+        }
+    }
+
     // List parts
     $sql = "SELECT parts.id, parts.name, orderpart.count, orderpart.packed, 
         (SELECT SUM(count) FROM stock WHERE stock.partId=parts.id) as stock,
@@ -198,12 +207,16 @@ if ($result && $result->num_rows > 0) {
             <table class="styled-table">
                 <thead>
                 <tr>
-                    <th>Component</th>
-                    <th>Aantal</th>
-                    <th>Externe voorraad</th>
-                    <th>Voorraad</th>
-                    <th>Ingepakt</th>
-                    <th>Te kort</th>
+                    <?php
+                    echo("<th>Component</th>");
+                    echo("<th>Aantal nodig</th>");
+                    echoif(array(1, 2), "<th>Externe voorraad</th>");
+                    echo("<th>Voorraad</th>");
+                    echoif(array(1, 2), "<th>Te kort</th>");
+                    echoif(array(2), "<th>Ingepakt</th>");
+                    echoif(array(3, 4), "<th>Verzonden</th>");
+                    echoif(array(2), "<th>Nog inpakken</th>");
+                    ?>
                 </tr>
                 </thead>
                 <tbody>
@@ -212,13 +225,15 @@ if ($result && $result->num_rows > 0) {
                     $componentcount++;
                     $pid = $prow["id"];
                     $short = max($prow["count"] - ($prow["stock"] + $prow["extstock"] + $prow["packed"]), 0);
+                    $shortpacked = max($prow["count"] - ($prow["packed"] + $prow["extstock"]), 0);
                     echo("<tr>\n");
                     echo("<td><a href='item.php?id=$pid'>" . $prow["name"] . "</a></td>\n");
                     echo("<td>" . $prow["count"] . "</td>\n");
-                    echo("<td>" . $prow["extstock"] . "</td>\n");
+                    echoif(array(1, 2), "<td>" . $prow["extstock"] . "</td>\n");
                     echo("<td>" . $prow["stock"] . "</td>\n");
-                    echo("<td>" . $prow["packed"] . "</td>\n");
-                    echo("<td>$short</td>\n");
+                    echoif(array(1, 2), "<td>$short</td>\n");
+                    echoif(array(2, 3, 4),"<td>" . $prow["packed"] . "</td>\n");
+                    echoif(array(2),"<td>$shortpacked</td>\n");
                     echo("</tr>\n");
                 }
 
@@ -248,7 +263,7 @@ if ($result && $result->num_rows > 0) {
                     <td>
                         <form action="orderpicking.php" method="post">
                             <input type="hidden" name="id" value="<?php echo($id); ?>"/>
-                            <input name="next" type="submit" value="Naar componenten inpakken"/>
+                            <input name="next" type="submit" value="Inpakken"/>
                         </form>
                     </td>
                     <td>
@@ -263,24 +278,56 @@ if ($result && $result->num_rows > 0) {
                             <input name="next" type="submit" value="Pakbon printen"/>
                         </form>
                     </td>
+                    <td>
+                        <form action="order.php" method="post">
+                            <input type="hidden" name="id" value="<?php echo($id); ?>"/>
+                            <input type="hidden" name="newstatus" value="3"/>
+                            <input name="next" type="submit" value="Verzenden"
+                                   onclick="return confirm('Weet je het zeker?\nIs alles ingepakt?\nJe kan niet meer terug!')"/>
+                        </form>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <?php
+    } else if ($row["statusid"] == 3) { ?>
+        <br>
+        <div>
+            <table>
+                <tr>
+                    <td>
+                        <form action="generatepackinglist.php" method="post" target="_blank">
+                            <input type="hidden" name="id" value="<?php echo($id); ?>"/>
+                            <input name="next" type="submit" value="Pakbon printen"/>
+                        </form>
+                    </td>
+                    <td>
+                        <form action="orderprocessing.php" method="post">
+                            <input type="hidden" name="id" value="<?php echo($id); ?>"/>
+                            <input type="hidden" name="newstatus" value="3"/>
+                            <input name="next" type="submit" value="Voorraad verwerken"/>
+                        </form>
+                    </td>
                 </tr>
             </table>
         </div>
         <?php
     }
 
-    ?>
-    <div>
-        <h3>Order aanpassen</h3>
-        <form action="neworder.php" method="post">
-            <input type="hidden" name="edit-id" value="<?php echo($id); ?>">
-            <input type="hidden" name="oldname" value="<?php echo($row["name"]); ?>">
-            <input type="hidden" name="oldcompany" value="<?php echo($row["companyid"]); ?>">
-            <input type="hidden" name="oldrelation" value="<?php echo($row["relationid"]); ?>">
-            <input name="opslaan" type="submit" value="Aanpassen"/>
-        </form>
-    </div>
-    <?php
+    if ($row["statusid"] < 3) {
+        ?>
+        <div>
+            <h3>Order aanpassen</h3>
+            <form action="neworder.php" method="post">
+                <input type="hidden" name="edit-id" value="<?php echo($id); ?>">
+                <input type="hidden" name="oldname" value="<?php echo($row["name"]); ?>">
+                <input type="hidden" name="oldcompany" value="<?php echo($row["companyid"]); ?>">
+                <input type="hidden" name="oldrelation" value="<?php echo($row["relationid"]); ?>">
+                <input name="opslaan" type="submit" value="Aanpassen"/>
+            </form>
+        </div>
+        <?php
+    }
     printFooter();
 } else {
     // Invalid id

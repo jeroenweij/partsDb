@@ -80,17 +80,17 @@ table {
     <p>" . $row["contact"] . "<br>\n" . str_replace("\n", "<br>\n", $row["relationaddress"]) . "</p>
     <table class='nostyle'>
         <tr>
-            <td class='nostyle' style='width: 120px'>Pakbon</td>
+            <td class='nostyle' style='width: 120px'>Pakbon:</td>
             <td class='nostyle' style='width: 300px'>" . date("ym") . sprintf('%04d', $id)."</td>
             <td class='nostyle'>" . $row["companyname"] . "</td>
         </tr>
         <tr>
-            <td class='nostyle'>Datum</td>
+            <td class='nostyle'>Datum:</td>
             <td class='nostyle'>" . date("d-m-Y") . "</td>
             <td class='nostyle' rowspan='3'>" . str_replace("\n", "<br>\n", $row["companyaddress"]) . "</td>
         </tr>
         <tr>
-            <td class='nostyle'>Order</td>
+            <td class='nostyle'>Order:</td>
             <td class='nostyle'>" . $row["name"] . "</td>
         </tr>
         <tr>
@@ -101,8 +101,8 @@ table {
     <table>
         <thead>
             <tr>
-                <th style='text-align: left'>#</th>
-                <th style='text-align: left'>Aantal</th>
+                <th style='text-align: left; width: 50px;'>#</th>
+                <th style='text-align: left; width: 75px;'>Aantal</th>
                 <th style='text-align: left'>Beschrijving</th>
             </tr>
         </thead>
@@ -119,7 +119,7 @@ if ($result && $result->num_rows > 0) {
     $i=1;
     while ($prow = $result->fetch_assoc()) {
         $html=$html."<tr>\n";
-        $html=$html."<td>" . $i . "</td>\n";
+        $html=$html."<td'>" . $i . "</td>\n";
         $html=$html."<td>" . $prow["count"] . "</td>\n";
         $html=$html."<td>" . $prow["name"] . "</td>\n";
         $html=$html."</tr>\n";

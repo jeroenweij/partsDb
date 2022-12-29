@@ -28,26 +28,18 @@ $sql = "SELECT orders.id, orders.name,
         FROM orders 
         LEFT JOIN relations ON orders.relation=relations.id
         LEFT JOIN companys ON orders.company=companys.id
-        LEFT JOIN statuses ON orders.status=statuses.id";
+        LEFT JOIN statuses ON orders.status=statuses.id
+        WHERE orders.status<5 ";
 
 $condition = "";
-function addCondition($new)
-{
-    global $condition;
-    if (strlen($condition) > 0) {
-        $condition = $condition . " AND ";
-    } else {
-        $condition = " WHERE ";
-    }
-    $condition = $condition . $new;
-}
 function checkSelected($item)
 {
+    global $condition;
     $itemname = "view-$item";
     if (isset($_POST[$itemname])) {
         $selectedValue = $_POST[$itemname];
         if ($selectedValue > 0) {
-            addCondition("$item.id='$selectedValue'");
+            $condition = $condition . " AND $item.id='$selectedValue'";
         }
     }
 }
@@ -118,51 +110,51 @@ if ($result && $result->num_rows > 0) {
     </table>
     Totaal: <?php echo($count); ?> orders.
     <div style="float: right">
-    <form action="" method="post">
-        <?php
-        function addFilter($name)
-        {
-            if (isset($_POST[$name])) {
-                echo("<input type=\"hidden\" name=\"$name\" value=\"" . $_POST[$name] . "\" />\n");
-            }
-        }
-
-        addFilter("view-relations");
-        addFilter("view-companys");
-        addFilter("view-statuses");
-
-        if ($count > $pageLimit) {
-            $pages = ceil($count / $pageLimit);
-            echo('<label>Pagina<select name="pageNum">');
-            for ($i = 0; $i < $pages; $i++) {
-                if ($i == $pageNum) {
-                    echo("<option selected>$i</option>\n");
-                } else {
-                    echo("<option>$i</option>\n");
+        <form action="" method="post">
+            <?php
+            function addFilter($name)
+            {
+                if (isset($_POST[$name])) {
+                    echo("<input type=\"hidden\" name=\"$name\" value=\"" . $_POST[$name] . "\" />\n");
                 }
             }
-            echo('</select></label>&nbsp;');
-        } else {
-            echo('<input name="pageNum" type="hidden" value="0" />');
-        }
-        ?>
-        <label>
-            Aantal per pagina:
-            <select name="pageLimit">
-                <?php
-                $pagesizes = array(10, 25, 50, 100, 250, 500, 1000);
-                foreach ($pagesizes as $i) {
-                    if ($i == $pageLimit) {
+
+            addFilter("view-relations");
+            addFilter("view-companys");
+            addFilter("view-statuses");
+
+            if ($count > $pageLimit) {
+                $pages = ceil($count / $pageLimit);
+                echo('<label>Pagina<select name="pageNum">');
+                for ($i = 0; $i < $pages; $i++) {
+                    if ($i == $pageNum) {
                         echo("<option selected>$i</option>\n");
                     } else {
                         echo("<option>$i</option>\n");
                     }
                 }
-                ?>
-            </select>
-        </label>
-        <input name="submit" type="submit" value="Ga"/>
-    </form>
+                echo('</select></label>&nbsp;');
+            } else {
+                echo('<input name="pageNum" type="hidden" value="0" />');
+            }
+            ?>
+            <label>
+                Aantal per pagina:
+                <select name="pageLimit">
+                    <?php
+                    $pagesizes = array(10, 25, 50, 100, 250, 500, 1000);
+                    foreach ($pagesizes as $i) {
+                        if ($i == $pageLimit) {
+                            echo("<option selected>$i</option>\n");
+                        } else {
+                            echo("<option>$i</option>\n");
+                        }
+                    }
+                    ?>
+                </select>
+            </label>
+            <input name="submit" type="submit" value="Ga"/>
+        </form>
     </div>
     <?php
 
