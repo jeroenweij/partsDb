@@ -232,8 +232,8 @@ if ($result && $result->num_rows > 0) {
                     echoif(array(1, 2), "<td>" . $prow["extstock"] . "</td>\n");
                     echo("<td>" . $prow["stock"] . "</td>\n");
                     echoif(array(1, 2), "<td>$short</td>\n");
-                    echoif(array(2, 3, 4),"<td>" . $prow["packed"] . "</td>\n");
-                    echoif(array(2),"<td>$shortpacked</td>\n");
+                    echoif(array(2, 3, 4), "<td>" . $prow["packed"] . "</td>\n");
+                    echoif(array(2), "<td>$shortpacked</td>\n");
                     echo("</tr>\n");
                 }
 
@@ -244,17 +244,26 @@ if ($result && $result->num_rows > 0) {
         <?php
     }
 
-    if ($row["statusid"] == 1 && $componentcount > 0) { ?>
+    if ($row["statusid"] == 1) { ?>
         <br>
         <div>
-            <form action="order.php" method="post">
+            <form action="orderEdit.php" method="post">
                 <input type="hidden" name="id" value="<?php echo($id); ?>"/>
-                <input type="hidden" name="newstatus" value="2"/>
-                <input name="next" type="submit" value="Naar componenten verzamelen"
-                       onclick="return confirm('Weet je het zeker?\nje kan niet meer terug')"/>
+                <input name="next" type="submit" value="Componenten aanpassen"/>
             </form>
         </div>
-        <?php
+        <?php if ($componentcount > 0) { ?>
+            <br>
+            <div>
+                <form action="order.php" method="post">
+                    <input type="hidden" name="id" value="<?php echo($id); ?>"/>
+                    <input type="hidden" name="newstatus" value="2"/>
+                    <input name="next" type="submit" value="Naar componenten verzamelen"
+                           onclick="return confirm('Weet je het zeker?\nje kan niet meer terug')"/>
+                </form>
+            </div>
+            <?php
+        }
     } else if ($row["statusid"] == 2) { ?>
         <br>
         <div>

@@ -13,7 +13,7 @@ function addLink($target, $name): void
     echo("        <a $class href='$target'>$name</a>");
 }
 
-function printHeader($title): void
+function printHeader($title, $extra = null): void
 {
     echo("<!DOCTYPE html>\n");
     echo("<html>\n");
@@ -23,6 +23,10 @@ function printHeader($title): void
     echo("    <link rel=\"stylesheet\" href=\"css/navbar.css\"/>\n");
     echo("    <link rel=\"stylesheet\" href=\"css/style.css\"/>\n");
     echo("    <link rel=\"shortcut icon\" href=\"favicon.ico\" type=\"image/x-icon\" />\n");
+
+    if ($extra){
+        echo($extra);
+    }
     echo("</head>\n");
     echo("<body>\n");
     echo("<div class='form'>\n");

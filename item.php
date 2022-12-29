@@ -30,7 +30,7 @@ if (isset($_POST["diff"])) {
         if (strlen($diff) == 0) {
             $diff = 1;
         }
-        $sql = "UPDATE $table SET count=count $operator $diff WHERE id=$stockid";
+        $sql = "UPDATE $table SET count=GREATEST(count $operator $diff, 0) WHERE id=$stockid";
     }
     if (strlen($diff) > 0) {
         $conn->query($sql);
