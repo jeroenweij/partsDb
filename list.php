@@ -128,7 +128,7 @@ checkSelected("units");
 checkSelected("projects");
 checkSelected("locations");
 if ($sublocation > 0) {
-    addCondition("parts.sublocation='$sublocation'");
+    addCondition("stock.sublocation='$sublocation'");
 }
 if (isset($_POST["instock"])) {
     addCondition("stock.count > 0");

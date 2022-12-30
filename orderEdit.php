@@ -130,7 +130,16 @@ $(function() {
     $componentcount = 0;
     if ($result && $result->num_rows > 0) {
         ?>
-
+        <div>
+        <h3>Component toevoegen:</h3>
+        <form method="post">
+            <input type="hidden" name="id" value="<?php echo($id); ?>"/>
+            <input type="hidden" name="partid" id="part_id"/>
+            <input type="text" name="newpart" id="part_input" placeholder="Start typing..."/>
+            <input type="text" name="count" placeholder="Aantal"/>
+            <input type="submit" value="Opslaan"/>
+        </form>
+        </div>
         <div>
             <h3>Componenten</h3>
             <table class="styled-table">
@@ -188,14 +197,6 @@ $(function() {
         <?php
     }
     ?>
-    <h3>Component toevoegen:</h3>
-    <form method="post">
-        <input type="hidden" name="id" value="<?php echo($id); ?>"/>
-        <input type="hidden" name="partid" id="part_id"/>
-        <input type="text" name="newpart" id="part_input" placeholder="Start typing..."/>
-        <input type="text" name="count" placeholder="Aantal"/>
-        <input type="submit" value="Opslaan"/>
-    </form>
     <br>
     <div>
         <form action="order.php" method="post">

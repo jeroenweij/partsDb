@@ -194,17 +194,18 @@ if ($result && $result->num_rows > 0) {
                                         FROM orderpart 
                                         LEFT JOIN orders ON orderpart.orderId=orders.id 
                                         LEFT JOIN relations ON relations.id=orders.relation 
-                                        WHERE orderpart.packed > 0 AND orderpart.part=" . $row["id"]);
+                                        WHERE orders.status < 4
+                                        AND orderpart.packed > 0 AND orderpart.part=" . $row["id"]);
     if ($stockresult && $stockresult->num_rows > 0) {
         ?>
         <div>
-            <h3>Voorraad ingepakt voor verzending</h3>
+            <h3>Voorraad gereserveerd voor assemblage</h3>
             <table class="styled-table">
                 <thead>
                 <tr>
                     <th>Order</th>
-                    <th>Relatie</th>
-                    <th>Voorraad</th>
+                    <th>Assembleur</th>
+                    <th>Aantal</th>
                 </tr>
                 </thead>
                 <tbody>
