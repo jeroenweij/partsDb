@@ -109,7 +109,7 @@ table {
         <tbody>";
 
 // List parts
-$sql = "SELECT parts.name, orderpart.count, orderpart.packed
+$sql = "SELECT parts.name, orderpart.packed
             FROM parts 
             LEFT JOIN orderpart ON orderpart.part=parts.id 
             WHERE orderpart.count > 0 AND parts.deleted=0 AND orderpart.orderId=$id";
@@ -120,7 +120,7 @@ if ($result && $result->num_rows > 0) {
     while ($prow = $result->fetch_assoc()) {
         $html=$html."<tr>\n";
         $html=$html."<td'>" . $i . "</td>\n";
-        $html=$html."<td>" . $prow["count"] . "</td>\n";
+        $html=$html."<td>" . $prow["packed"] . "</td>\n";
         $html=$html."<td>" . $prow["name"] . "</td>\n";
         $html=$html."</tr>\n";
         $i++;
