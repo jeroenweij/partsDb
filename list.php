@@ -134,7 +134,8 @@ if (isset($_POST["instock"])) {
     addCondition("stock.count > 0");
 }
 
-$sql = "SELECT parts.id, parts.name, parts.description, stock.count, parts.value, stock.sublocation,
+$sql = "SELECT parts.id, parts.name, parts.description, parts.value, stock.sublocation,
+       (SELECT SUM(count) FROM stock WHERE stock.partId=parts.id) as count,
        types.name as type, 
        units.name as unit,
        packages.name as package,

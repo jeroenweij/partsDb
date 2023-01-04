@@ -71,6 +71,7 @@ if ($result && $result->num_rows > 0) {
         <tbody>
         <?php
         while ($row = $result->fetch_assoc()) {
+            $editok= $row["id"] > 1 || $row["name"] != "-";
             echo("    <tr>\n");
             echo("        <td>" . $row["id"] . "</td>\n");
             echo("        <td>" . $row["name"] . "</td>\n");
@@ -81,7 +82,7 @@ if ($result && $result->num_rows > 0) {
             echo("<input type=\"submit\" value=\"Bekijken\" />\n");
             echo("</form></td>\n");
 
-            if ($row["id"] > 1 || $table == "projects") {
+            if ($editok) {
                 echo("<td><form action=\"$topfile\" method=\"post\">\n");
                 echo("<input type=\"hidden\" name=\"edit-id\" value=\"" . $row["id"] . "\">\n");
                 echo("<input type=\"hidden\" name=\"oldname\" value=\"" . $row["name"] . "\">\n");
@@ -91,7 +92,7 @@ if ($result && $result->num_rows > 0) {
                 echo("        <td></td>\n");
             }
 
-            if ($row["ref"] == 0 && ($row["id"] > 1 || $table == "projects")) {
+            if ($row["ref"] == 0 && $editok) {
                 echo("<td><form action=\"$topfile\" method=\"post\">\n");
                 echo("<input type=\"hidden\" name=\"del-id\" value=\"" . $row["id"] . "\">\n");
                 echo("<input name=\"delete\" type=\"submit\" value=\"Verwijderen\"  onclick=\"return confirm('Weet je het zeker?')\" />\n");

@@ -40,14 +40,13 @@ if (isset($_POST["select-locations"])) {
     $location = validateNumberInput($_POST["select-locations"]);
     $subloc = validateNumberInput($_POST["sublocation"]);
     $count = validateNumberInput($_POST["count"]);
-    if ($location > 1) {
-        $conn->query("INSERT INTO stock (partId, location, sublocation, count) SELECT $id, $location, $subloc, 0
+
+    $conn->query("INSERT INTO stock (partId, location, sublocation, count) SELECT $id, $location, $subloc, 0
         FROM DUAL WHERE NOT EXISTS (
         SELECT count FROM stock WHERE partId = $id AND location = $location AND sublocation = $subloc);");
 
-        $sql = "UPDATE stock SET count=count + $count, deleted=0 WHERE partId = $id AND location = $location AND sublocation = $subloc";
-        $conn->query($sql);
-    }
+    $sql = "UPDATE stock SET count=count + $count, deleted=0 WHERE partId = $id AND location = $location AND sublocation = $subloc";
+    $conn->query($sql);
 }
 
 if (isset($_POST["select-relations"])) {
@@ -90,7 +89,8 @@ if (isset($_POST["select-projects"])) {
 $sql = "SELECT parts.id, parts.name, parts.description, parts.value,
        types.name as type, 
        units.name as unit,
-       packages.name as package
+       packages.name as package,
+       (SELECT SUM(count) FROM stock WHERE stock.partId=parts.id) as count
         FROM parts 
         LEFT JOIN types ON parts.type=types.id
         LEFT JOIN units ON parts.unit=units.id
@@ -128,7 +128,7 @@ if ($result && $result->num_rows > 0) {
     if ($stockresult && $stockresult->num_rows > 0) {
         ?>
         <div>
-            <h3>Voorraad</h3>
+            <h3>Voorraad <?php echo($row["count"]); ?></h3>
             <table class="styled-table">
                 <thead>
                 <tr>

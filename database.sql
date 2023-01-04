@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Dec 22, 2022 at 06:11 PM
--- Server version: 10.6.7-MariaDB-2ubuntu1.1
--- PHP Version: 8.1.2-1ubuntu2.8
+-- Generation Time: Jan 04, 2023 at 09:48 AM
+-- Server version: 10.6.11-MariaDB-0ubuntu0.22.04.1
+-- PHP Version: 8.1.2-1ubuntu2.9
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -17,11 +17,11 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
 
-CREATE DATABASE IF NOT EXISTS `components` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-USE `components`;
 --
 -- Database: `components`
 --
+CREATE DATABASE IF NOT EXISTS `components` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `components`;
 
 -- --------------------------------------------------------
 
@@ -32,8 +32,9 @@ USE `components`;
 CREATE TABLE `companys` (
   `id` int(11) NOT NULL,
   `name` varchar(80) NOT NULL,
-  `address` varchar(200) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `address` varchar(200) NOT NULL,
+  `logo` varchar(80) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -46,7 +47,7 @@ CREATE TABLE `extstock` (
   `part` int(11) NOT NULL,
   `relation` int(11) NOT NULL,
   `count` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -57,10 +58,7 @@ CREATE TABLE `extstock` (
 CREATE TABLE `locations` (
   `id` int(11) NOT NULL,
   `name` varchar(80) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-INSERT INTO `locations` (`id`, `name`) VALUES
-(1, '-');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -73,7 +71,7 @@ CREATE TABLE `orderpart` (
   `part` int(11) NOT NULL,
   `count` int(11) NOT NULL DEFAULT 0,
   `packed` int(11) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -85,7 +83,7 @@ CREATE TABLE `orderproject` (
   `orderId` int(11) NOT NULL,
   `project` int(11) NOT NULL,
   `count` int(11) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -99,7 +97,7 @@ CREATE TABLE `orders` (
   `status` int(11) NOT NULL DEFAULT 1,
   `relation` int(11) NOT NULL,
   `company` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -110,10 +108,7 @@ CREATE TABLE `orders` (
 CREATE TABLE `packages` (
   `id` int(11) NOT NULL,
   `name` varchar(80) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-INSERT INTO `packages` (`id`, `name`) VALUES
-(1, '-');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -125,7 +120,7 @@ CREATE TABLE `partproject` (
   `part` int(11) NOT NULL,
   `project` int(11) NOT NULL,
   `count` int(11) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -140,8 +135,9 @@ CREATE TABLE `parts` (
   `value` float DEFAULT NULL,
   `description` varchar(120) DEFAULT NULL,
   `package` int(11) NOT NULL,
-  `unit` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `unit` int(11) NOT NULL,
+  `deleted` tinyint(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -152,7 +148,7 @@ CREATE TABLE `parts` (
 CREATE TABLE `projects` (
   `id` int(11) NOT NULL,
   `name` varchar(80) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -165,7 +161,7 @@ CREATE TABLE `relations` (
   `name` varchar(80) NOT NULL,
   `contact` varchar(80) NOT NULL,
   `address` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -176,7 +172,7 @@ CREATE TABLE `relations` (
 CREATE TABLE `statuses` (
   `id` int(11) NOT NULL,
   `name` varchar(16) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -189,8 +185,9 @@ CREATE TABLE `stock` (
   `partId` int(11) NOT NULL,
   `location` int(11) NOT NULL,
   `sublocation` int(11) NOT NULL,
-  `count` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `count` int(11) NOT NULL,
+  `deleted` tinyint(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -201,7 +198,7 @@ CREATE TABLE `stock` (
 CREATE TABLE `tags` (
   `tag` varchar(32) NOT NULL,
   `part` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -212,10 +209,7 @@ CREATE TABLE `tags` (
 CREATE TABLE `types` (
   `id` int(11) NOT NULL,
   `name` varchar(80) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-INSERT INTO `types` (`id`, `name`) VALUES
-(1, '-');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -226,10 +220,7 @@ INSERT INTO `types` (`id`, `name`) VALUES
 CREATE TABLE `units` (
   `id` int(11) NOT NULL,
   `name` varchar(80) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-INSERT INTO `units` (`id`, `name`) VALUES
-(1, '-');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Indexes for dumped tables
@@ -346,6 +337,14 @@ ALTER TABLE `units`
   ADD PRIMARY KEY (`id`);
 
 --
+-- INSERT data
+--
+
+INSERT INTO `packages` (`id`, `name`) VALUES (1, '-');
+INSERT INTO `types` (`id`, `name`) VALUES (1, '-');
+INSERT INTO `units` (`id`, `name`) VALUES (1, '-');
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -365,7 +364,7 @@ ALTER TABLE `extstock`
 -- AUTO_INCREMENT for table `locations`
 --
 ALTER TABLE `locations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `orders`
