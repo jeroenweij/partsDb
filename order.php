@@ -208,6 +208,7 @@ if ($result && $result->num_rows > 0) {
                 <thead>
                 <tr>
                     <?php
+                    echo("<th>Id</th>");
                     echo("<th>Component</th>");
                     echo("<th>Aantal nodig</th>");
                     echoif(array(1, 2), "<th>Externe voorraad</th>");
@@ -227,6 +228,7 @@ if ($result && $result->num_rows > 0) {
                     $short = max($prow["count"] - ($prow["stock"] + $prow["extstock"] + $prow["packed"]), 0);
                     $shortpacked = max($prow["count"] - ($prow["packed"] + $prow["extstock"]), 0);
                     echo("<tr>\n");
+                    echo("<td><a href='item.php?id=$pid'>$pid</a></td>\n");
                     echo("<td><a href='item.php?id=$pid'>" . $prow["name"] . "</a></td>\n");
                     echo("<td>" . $prow["count"] . "</td>\n");
                     echoif(array(1, 2), "<td>" . $prow["extstock"] . "</td>\n");

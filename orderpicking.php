@@ -81,6 +81,7 @@ if ($result && $result->num_rows > 0) {
                 <table class="styled-table">
                     <thead>
                     <tr>
+                        <th>Id</th>
                         <th>Component</th>
                         <th>Aantal in te pakken</th>
                         <th>Lokatie</th>
@@ -108,6 +109,7 @@ if ($result && $result->num_rows > 0) {
                             $rowspan = $stockresult->num_rows;
                         }
                         echo("<tr class='" . ($evenrow ? "even" : "odd") . "'>\n");
+                        echo("<td rowspan='$rowspan'><a href='item.php?id=$pid'>$pid</a></td>\n");
                         echo("<td rowspan='$rowspan'><a href='item.php?id=$pid'>" . $prow["name"] . "</a></td>\n");
                         echo("<td rowspan='$rowspan'>$short</td>\n");
 

@@ -65,6 +65,7 @@ table {
     <table>
         <thead>
             <tr>
+                <th style='text-align: left'>Id</th>
                 <th style='text-align: left'>Component</th>
                 <th style='text-align: left'>Aantal nodig</th>
                 <th style='text-align: left'>Lokatie</th>
@@ -99,6 +100,7 @@ if ($result && $result->num_rows > 0) {
             $rowspan = $stockresult->num_rows;
         }
         $html = $html . "<tr>\n";
+        $html = $html . "<td rowspan='$rowspan'>$pid</td>\n";
         $html = $html . "<td rowspan='$rowspan'>" . $prow["name"] . "</td>\n";
         $html = $html . "<td rowspan='$rowspan'>$short</td>\n";
 

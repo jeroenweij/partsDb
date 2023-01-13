@@ -184,6 +184,7 @@ if ($result && $result->num_rows > 0) {
     <table class="styled-table">
         <thead>
         <tr>
+            <th>Id</th>
             <th>Naam</th>
             <th>Beschrijving</th>
             <th>Type</th>
@@ -200,6 +201,7 @@ if ($result && $result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
             echo("<tr class='border'>\n");
             $id = $row["id"];
+            echo("<td><a href='item.php?id=$id' >$id</a></td>\n");
             echo("<td><a href='item.php?id=$id' >" . $row["name"] . "</a></td>\n");
             if ($row["description"]) {
                 if (strlen($row["description"]) > $maxDesc) {

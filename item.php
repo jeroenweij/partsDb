@@ -100,7 +100,7 @@ $sql = "SELECT parts.id, parts.name, parts.description, parts.value,
 $result = $conn->query($sql);
 if ($result && $result->num_rows > 0) {
     $row = $result->fetch_assoc();
-    printHeader($row["name"]);
+    printHeader($row["id"] . " - " . $row["name"]);
 
     echo("<p>" . $row["description"] . "</p>");
     ?>
