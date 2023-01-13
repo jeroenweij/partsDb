@@ -24,6 +24,16 @@ printHeader("Zoeken");
     }
 
     if ($result && $result->num_rows == 0) {
+        if (str_starts_with($input, '*')) {
+           $id = validateNumberInput($input);
+           if (strlen($id) > 0 && strlen($id) < 5){
+                $query = " parts.id = $id";
+                $result = $conn->query($sql . $query);
+           }
+        }
+    }
+
+    if ($result && $result->num_rows == 0) {
         $query = " parts.name = \"$input\"";
         $result = $conn->query($sql . $query);
     }
