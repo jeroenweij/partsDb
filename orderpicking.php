@@ -94,7 +94,7 @@ if ($result && $result->num_rows > 0) {
                     while ($prow = $result->fetch_assoc()) {
                         $evenrow = -$evenrow + 1;
                         $pid = $prow["id"];
-                        $short = max($prow["count"] - ($prow["stock"] + $prow["extstock"] + $prow["packed"]), 0);
+                        $short = max($prow["count"] - ($prow["extstock"] + $prow["packed"]), 0);
 
 
                         $sql = "SELECT stock.id, stock.count, stock.sublocation, locations.name as location
