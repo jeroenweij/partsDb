@@ -4,3 +4,6 @@ extimg
 
 label/data.csv
 label/output.pdf
+
+scanner/linux/build/
+*.user
