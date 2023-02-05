@@ -7,7 +7,7 @@ function target_popup(form) {
 }
 </script>";
 
-function printprintbutton($id, $mpn, $type, $value, $location): void
+function printprintbutton($id, $mpn, $type, $value, $package, $location): void
 {
     ?>
     <div>
@@ -16,6 +16,7 @@ function printprintbutton($id, $mpn, $type, $value, $location): void
             <input type="hidden" name="mpn" value="<?php echo($mpn); ?>"/>
             <input type="hidden" name="type" value="<?php echo($type); ?>"/>
             <input type="hidden" name="value" value="<?php echo($value); ?>"/>
+            <input type="hidden" name="package" value="<?php echo($package); ?>"/>
             <input type="hidden" name="loc" value="<?php echo($location); ?>"/>
             <input name="save" type="submit" value="Print label"/>
         </form>

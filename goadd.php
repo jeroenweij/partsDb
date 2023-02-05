@@ -100,7 +100,7 @@ if (!$itemExists || $itemExists->num_rows == 0) {
                                 $spec = $specs[$i];
 
                                 if (!$valueSet && isMatch($parent, $category, $spec["attribute"]["name"])) {
-                                    if ($spec["valueType"] == "number") {
+                                    if ($spec["valueType"] == "number" || $spec["valueType"] == "float") {
                                         $value = $spec["value"];
                                         $valueUnit = $spec["units"];
                                         if ($packageSet)

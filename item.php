@@ -104,6 +104,8 @@ $result = $conn->query($sql);
 if ($result && $result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $value = $row["value"] . " " . $row["unit"];
+    $package = $row["package"];
+
     printHeader($row["id"] . " - " . $row["name"], $labelformscript);
 
     echo("<p>" . $row["description"] . "</p>");
@@ -120,7 +122,7 @@ if ($result && $result->num_rows > 0) {
             </tr>
             <tr>
                 <td>package:</td>
-                <td><?php echo($row["package"]); ?></td>
+                <td><?php echo($package); ?></td>
             </tr>
         </table>
     </div>
@@ -175,7 +177,7 @@ if ($result && $result->num_rows > 0) {
                         <?php } ?>
                     </td>
                     <td>
-                        <?php printprintbutton($id, $row["name"], $row["type"], $value, "$location $subloc"); ?>
+                        <?php printprintbutton($id, $row["name"], $row["type"], $value, $package,"$location $subloc"); ?>
                     </td>
                     <?php
                     echo("</tr>\n");
@@ -376,7 +378,7 @@ if ($result && $result->num_rows > 0) {
     </div>
     <div>
         <h3>Label printen</h3>
-        <?php printprintbutton($id, $row["name"], $row["type"], $value, "$location $subloc"); ?>
+        <?php printprintbutton($id, $row["name"], $row["type"], $value, $package, "$location $subloc"); ?>
     </div>
     <?php
     printFooter();
