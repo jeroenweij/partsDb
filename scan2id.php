@@ -2,7 +2,7 @@
 
 function scan2id($input)
 {
-    if ((str_starts_with($input, "[)>") || str_starts_with($input, ">[)>")) && str_contains($input, "?") ){
+    if ((str_starts_with($input, "[)>") || str_starts_with($input, ">[)>") || str_starts_with($input, "EA")) && str_contains($input, "?") ){
         // Data matrix
         $splitted = explode("?", $input);
         $input = "";

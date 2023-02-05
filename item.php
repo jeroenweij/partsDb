@@ -6,6 +6,8 @@ if (!isset($_POST["id"]) && !isset($_GET["id"])) {
 require('mysqlConn.php');
 require('header.php');
 require('formFunctions.php');
+require('label/labelform.php');
+
 $id = "";
 if (isset($_POST["id"])) {
     $id = $_POST["id"];
@@ -36,6 +38,7 @@ if (isset($_POST["diff"])) {
         $conn->query($sql);
     }
 }
+
 if (isset($_POST["select-locations"])) {
     $location = validateNumberInput($_POST["select-locations"]);
     $subloc = validateNumberInput($_POST["sublocation"]);
@@ -100,7 +103,8 @@ $sql = "SELECT parts.id, parts.name, parts.description, parts.value,
 $result = $conn->query($sql);
 if ($result && $result->num_rows > 0) {
     $row = $result->fetch_assoc();
-    printHeader($row["id"] . " - " . $row["name"]);
+    $value = $row["value"] . " " . $row["unit"];
+    printHeader($row["id"] . " - " . $row["name"], $labelformscript);
 
     echo("<p>" . $row["description"] . "</p>");
     ?>
@@ -112,7 +116,7 @@ if ($result && $result->num_rows > 0) {
             </tr>
             <tr>
                 <td>waarde:</td>
-                <td><?php echo($row["value"] . " " . $row["unit"]); ?></td>
+                <td><?php echo($value); ?></td>
             </tr>
             <tr>
                 <td>package:</td>
@@ -124,6 +128,8 @@ if ($result && $result->num_rows > 0) {
     <?php
 
     // Stock table
+    $location = "-";
+    $subloc = "";
     $stockresult = $conn->query("SELECT stock.id, stock.sublocation, stock.count, locations.name as location FROM stock LEFT JOIN locations ON stock.location=locations.id WHERE (stock.deleted=0 OR stock.count>0) AND stock.partId = " . $row["id"]);
     if ($stockresult && $stockresult->num_rows > 0) {
         ?>
@@ -136,13 +142,16 @@ if ($result && $result->num_rows > 0) {
                     <th>Voorraad</th>
                     <th>Aanpassen</th>
                     <th>Verbergen</th>
+                    <th>Label</th>
                 </tr>
                 </thead>
                 <tbody>
                 <?php
                 while ($stockrow = $stockresult->fetch_assoc()) {
+                    $location = $stockrow["location"];
+                    $subloc = $stockrow["sublocation"];
                     echo("<tr>\n");
-                    echo("    <td><b>" . $stockrow["location"] . " " . $stockrow["sublocation"] . "</b></td>\n");
+                    echo("    <td><b>$location $subloc</b></td>\n");
                     echo("    <td><b>" . $stockrow["count"] . "</b></td>\n");
                     ?>
                     <td>
@@ -164,6 +173,9 @@ if ($result && $result->num_rows > 0) {
                                        onclick="return confirm('Weet je het zeker?')"/>
                             </form>
                         <?php } ?>
+                    </td>
+                    <td>
+                        <?php printprintbutton($id, $row["name"], $row["type"], $value, "$location $subloc"); ?>
                     </td>
                     <?php
                     echo("</tr>\n");
@@ -361,6 +373,10 @@ if ($result && $result->num_rows > 0) {
             <input type="hidden" name="id" value="<?php echo($id); ?>">
             <input name="opslaan" type="submit" value="Aanpassen"/>
         </form>
+    </div>
+    <div>
+        <h3>Label printen</h3>
+        <?php printprintbutton($id, $row["name"], $row["type"], $value, "$location $subloc"); ?>
     </div>
     <?php
     printFooter();

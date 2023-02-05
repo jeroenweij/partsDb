@@ -1,24 +1,35 @@
 <?php
 
-require('mysqlConn.php');
-require('scan2id.php');
-require('header.php');
+require_once('mysqlConn.php');
+require_once('scan2id.php');
+require_once('header.php');
 
 printHeader("Componenten");
 
-$input = "";
-if (isset($_POST["q"])) {
-    $input = scan2id(validateInput($_POST["q"]));
+$input = filter_input(INPUT_POST, 'q');
+if (!empty($input)) {
+    $input = scan2id(validateInput($input));
 }
 
 $pageLimit = 50;
-if (isset($_POST["pageLimit"])) {
-    $pageLimit = $_POST["pageLimit"];
+$pageNum = 0;
+$sublocation = 0;
+$instock = false;
+
+if (array_key_exists('pageLimit', $_POST)) {
+    $pageLimit = filter_input(INPUT_POST, 'pageLimit', FILTER_SANITIZE_NUMBER_INT);
 }
 
-$pageNum = 0;
-if (isset($_POST["pageNum"])) {
-    $pageNum = $_POST["pageNum"];
+if (array_key_exists('pageNum', $_POST)) {
+    $pageNum = filter_input(INPUT_POST, 'pageNum', FILTER_SANITIZE_NUMBER_INT);
+}
+
+if (array_key_exists('sublocation', $_POST)) {
+    $sublocation = filter_input(INPUT_POST, 'sublocation', FILTER_SANITIZE_NUMBER_INT);
+}
+
+if (array_key_exists('instock', $_POST)) {
+    $instock = filter_input(INPUT_POST, 'instock', FILTER_VALIDATE_BOOLEAN);
 }
 
 function printFilterSelect($table, $name)
@@ -26,45 +37,32 @@ function printFilterSelect($table, $name)
     global $conn;
     $itemname = "view-$table";
     $selectedValue = 0;
-    if (isset($_POST[$itemname])) {
-        $selectedValue = $_POST[$itemname];
+    if (array_key_exists($itemname, $_POST)) {
+        $selectedValue = filter_input(INPUT_POST, $itemname, FILTER_SANITIZE_NUMBER_INT);
     }
 
     echo("$name ");
     echo "<select name=\"$itemname\">\n";
     echo "<option value=\"0\">All</option>\n";
-    $stresult = $conn->query("SELECT DISTINCT name, id FROM $table ORDER BY name");
-    if ($stresult && $stresult->num_rows > 0) {
-        // output data of each row
-        while ($strow = $stresult->fetch_assoc()) {
-            $selected = "";
-            if ($strow["id"] == $selectedValue) {
-                $selected = "selected";
-            }
-            echo "<option value=\"" . $strow["id"] . "\" $selected>" . $strow["name"] . "</option>\n";
-        }
+    $stmt = $conn->prepare("SELECT DISTINCT name, id FROM $table ORDER BY name");
+    $stmt->execute();
+    $stmt->bind_result($name, $id);
+    while ($stmt->fetch()) {
+        $selected = ($id == $selectedValue) ? 'selected' : '';
+        echo "<option value=\"$id\" $selected>$name</option>\n";
     }
-    echo "</select> \n";
+    $stmt->close();
+    echo "</select>\n";
 }
 
 function printSublocaton($selectedValue)
 {
     echo("<select name=\"sublocation\">\n");
-    $start = 1;
-    $selected = "";
-    if (0 == $selectedValue) {
-        $selected = "selected";
-    }
-    echo("<option value=\"0\" $selected>All</option>\n");
-
     for ($i = 1; $i <= 10; $i++) {
-        $selected = "";
-        if ($i == $selectedValue) {
-            $selected = "selected";
-        }
+        $selected = ($i == $selectedValue) ? 'selected' : '';
         echo("<option value=\"$i\" $selected>$i</option>\n");
     }
-    echo "</select> \n";
+    echo "</select>\n";
 }
 
 ?>
@@ -107,20 +105,19 @@ function addCondition($new)
     $condition = $condition . " AND " . $new;
 }
 
-if (strlen($input) > 0) {
+if (!empty($input)) {
     addCondition("parts.name LIKE \"%$input%\"");
 }
 
 function checkSelected($item)
 {
     $itemname = "view-$item";
-    if (isset($_POST[$itemname])) {
-        $selectedValue = $_POST[$itemname];
-        if ($selectedValue > 0) {
-            addCondition("$item.id='$selectedValue'");
-        }
+    $selectedValue = filter_input(INPUT_POST, $itemname, FILTER_SANITIZE_NUMBER_INT);
+    if ($selectedValue > 0) {
+        addCondition("$item.id='$selectedValue'");
     }
 }
+
 
 checkSelected("types");
 checkSelected("packages");
@@ -134,48 +131,45 @@ if (isset($_POST["instock"])) {
     addCondition("stock.count > 0");
 }
 
-$sql = "SELECT parts.id, parts.name, parts.description, parts.value, stock.sublocation,
+$select = "parts.id, parts.name, parts.description, parts.value, stock.sublocation,
        (SELECT SUM(count) FROM stock WHERE stock.partId=parts.id) as count,
        types.name as type, 
        units.name as unit,
        packages.name as package,
        locations.name as location,
-       projects.name as project
-        FROM parts 
-        LEFT JOIN types ON parts.type=types.id
-        LEFT JOIN units ON parts.unit=units.id
-        LEFT JOIN packages ON parts.package=packages.id
-        LEFT JOIN stock ON parts.id=stock.partId
-        LEFT JOIN locations ON stock.location=locations.id
-        LEFT JOIN partproject ON parts.id=partproject.part
-        LEFT JOIN projects ON partproject.project=projects.id
-        WHERE parts.deleted=0";
+       projects.name as project";
 
-$count = $conn->query("SELECT count(*) as c FROM parts 
+$from = "parts 
         LEFT JOIN types ON parts.type=types.id
         LEFT JOIN units ON parts.unit=units.id
         LEFT JOIN packages ON parts.package=packages.id
         LEFT JOIN stock ON parts.id=stock.partId
         LEFT JOIN locations ON stock.location=locations.id
         LEFT JOIN partproject ON parts.id=partproject.part
-        LEFT JOIN projects ON partproject.project=projects.id
-        WHERE parts.deleted=0 $condition");
-if ($count) {
-    $count = $count->fetch_assoc();
-    $count = $count["c"];
-}
+        LEFT JOIN projects ON partproject.project=projects.id";
+
+$where = "parts.deleted=0 $condition";
+
+$sql = "SELECT $select FROM $from WHERE $where";
+
+$count_query = "SELECT COUNT(DISTINCT(parts.id)) as c FROM $from WHERE $where";
+
+$stmt = $conn->prepare($count_query);
+$stmt->execute();
+$stmt->bind_result($count);
+$stmt->fetch();
+$stmt->close();
 
 if ($pageNum * $pageLimit > $count) {
     $pageNum = 0;
 }
 
-$sql = $sql . $condition;
-$sql = $sql . " GROUP BY parts.id";
-$sql = $sql . " ORDER BY parts.id ASC LIMIT $pageLimit";
-$sql = $sql . " OFFSET " . ($pageLimit * $pageNum);
-
-
-$result = $conn->query($sql);
+$sql = $sql . " GROUP BY parts.id ORDER BY parts.id ASC LIMIT ? OFFSET ?";
+$stmt = $conn->prepare($sql);
+$offset = $pageNum * $pageLimit;
+$stmt->bind_param("ii", $pageLimit, $offset);
+$stmt->execute();
+$result = $stmt->get_result();
 
 $maxDesc = 25;
 if ($result && $result->num_rows > 0) {
@@ -230,6 +224,7 @@ if ($result && $result->num_rows > 0) {
         </tbody>
     </table>
     Totaal: <?php echo($count); ?> onderdelen.
+
     <div style="float: right">
     <form action="" method="post">
         <?php

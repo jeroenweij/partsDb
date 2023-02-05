@@ -1,8 +1,9 @@
 <?php
 
 require('header.php');
+require('label/labelform.php');
 
-printHeader("Toevoegen");
+printHeader("Toevoegen", $labelformscript);
 
 // If adding a new part
 if (isset($_POST["mpn"])) {
@@ -51,6 +52,8 @@ if (isset($_POST["mpn"])) {
                     $conn->query("INSERT INTO `partproject` (`part`, `project`, `count`) VALUES ('$partid', '$projectid', '$usecount');");
                 }
             }
+
+            printprintbutton($partid, $partNum, $type, "$value $unit","$location $sublocation");
         }
     } else {
         echo("<h3 style='color: #ff0000'>Toevoegen gefaald!</h3>");
