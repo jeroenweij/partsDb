@@ -58,6 +58,7 @@ function printFilterSelect($table, $name)
 function printSublocaton($selectedValue)
 {
     echo("<select name=\"sublocation\">\n");
+    echo("<option value=\"0\">-</option>\n");
     for ($i = 1; $i <= 10; $i++) {
         $selected = ($i == $selectedValue) ? 'selected' : '';
         echo("<option value=\"$i\" $selected>$i</option>\n");
@@ -82,7 +83,7 @@ function printSublocaton($selectedValue)
                 if (isset($_POST["sublocation"])) {
                     $sublocation = $_POST["sublocation"];
                 }
-                printSublocaton($sublocation, true);
+                printSublocaton($sublocation);
                 ?></label><?php
             $checked = "";
             if (isset($_POST["instock"])) {
