@@ -1,8 +1,9 @@
 <?php
 
-function isMatch($parent, $category, $specName)
+function isMatch($parent, $category, $specName, $debug=false)
 {
-    echo("<pre>Parent = $parent && spec = $specName</pre>\n");
+    if ($debug)
+        echo("<pre>Parent = $parent && spec = $specName</pre>\n");
     if ($specName == "Inductance" && $parent == "inductors")
         return true;
     if ($specName == "Resistance" && ($parent == "resistors" || $category=="Resistor"))
@@ -24,7 +25,8 @@ function isMatch($parent, $category, $specName)
     if ($parent == "transistors") {
         return ($specName == "Continuous Drain Current (ID)" || $specName == "Max Collector Current");
     }
-    echo("<pre>FALSE</pre>\n");
+    if ($debug)
+        echo("<pre>FALSE</pre>\n");
     return false;
 }
 

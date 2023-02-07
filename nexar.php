@@ -74,7 +74,7 @@ if (isset($_POST["q"])) {
                             for ($i = 0; $i < count($specs); $i++) {
                                 $spec = $specs[$i];
 
-                                if (!$valueSet && isMatch($parent, $category, $spec["attribute"]["name"])) {
+                                if (!$valueSet && isMatch($parent, $category, $spec["attribute"]["name"], true)) {
                                     if ($spec["valueType"] == "number" || $spec["valueType"] == "float") {
                                         $value = $spec["value"];
                                         $valueUnit = $spec["units"];
