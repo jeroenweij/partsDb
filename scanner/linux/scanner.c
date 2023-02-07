@@ -13,6 +13,8 @@ struct Key
     bool shift;
 };
 
+
+
 static const struct Key keymap[97] =
 {
     {KEY_SPACE,      false}, // 32
@@ -114,6 +116,8 @@ static const struct Key keymap[97] =
     {KEY_ENTER,      false}, //
 };
 
+const int sleepus = 1000;
+
 void press_shift(int fd)
 {
     struct input_event ev = {0};
@@ -128,6 +132,7 @@ void press_shift(int fd)
     ev.code  = SYN_REPORT;
     ev.value = 0;
     write(fd, &ev, sizeof(ev));
+    usleep(sleepus);
 }
 
 void release_shift(int fd)
@@ -144,6 +149,7 @@ void release_shift(int fd)
     ev.code  = SYN_REPORT;
     ev.value = 0;
     write(fd, &ev, sizeof(ev));
+    usleep(sleepus);
 }
 
 void send_key(const int fd, const int keyindex)
@@ -167,6 +173,8 @@ void send_key(const int fd, const int keyindex)
     event.value = 0;
     write(fd, &event, sizeof(event));
 
+    usleep(sleepus);
+
     event.type  = EV_KEY;
     event.value = 0;
     event.code  = key;
@@ -176,6 +184,8 @@ void send_key(const int fd, const int keyindex)
     event.code  = SYN_REPORT;
     event.value = 0;
     write(fd, &event, sizeof(event));
+
+    usleep(sleepus);
 
     if (shift)
     {
@@ -220,14 +230,15 @@ int main()
     memset(&uinput_dev, 0, sizeof(uinput_dev));
     snprintf(uinput_dev.name, UINPUT_MAX_NAME_SIZE, "uinput-scanner");
     uinput_dev.id.bustype = BUS_VIRTUAL;
-    uinput_dev.id.vendor  = 0x1234;
-    uinput_dev.id.product = 0x5678;
+    uinput_dev.id.vendor  = 0x5234;
+    uinput_dev.id.product = 0x1247;
     uinput_dev.id.version = 1;
     ioctl(uinput_fd, UI_SET_EVBIT, EV_SYN);
     ioctl(uinput_fd, UI_SET_EVBIT, EV_KEY);
-    for (int i = 0; i < 120; i++)
+    for (int i=0; i < (sizeof(keymap) / sizeof(struct Key)); i++)
     {
-        ioctl(uinput_fd, UI_SET_KEYBIT, i);
+        // printf("key = %d\n",keymap[i].code);
+        ioctl(uinput_fd, UI_SET_KEYBIT, keymap[i].code);
     }
     ioctl(uinput_fd, UI_SET_KEYBIT, KEY_LEFTSHIFT);
     write(uinput_fd, &uinput_dev, sizeof(uinput_dev));
@@ -244,18 +255,18 @@ int main()
         {
             c = '?';
         }
-        if (c == '\n')
-        {
-            c = 32 + 96;
-        }
 
         // Type character on virtual keyboard
-        if (c >= 32)
+        if (c >= 32 || c == '\n' || c == '\r')
         {
             int i = c - 32;
+            if (c == '\n' || c == '\r')
+            {
+                i = 96;
+            }
             if (i < (sizeof(keymap) / sizeof(struct Key)))
             {
-                printf("%c - %d - %d ", c, c, i);
+                printf("key = %d\n",keymap[i].code);
                 send_key(uinput_fd, i);
             }
         }
