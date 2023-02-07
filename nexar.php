@@ -1,5 +1,6 @@
 <?php
 
+require('ismatch.php');
 require('scan2id.php');
 require('nexarAPI.php');
 require('header.php');
@@ -13,35 +14,6 @@ printHeader("Nexar");
         <input class="twohndrdpx" name="submit" type="submit" value="Zoek"/>
     </form>
 <?php
-
-
-function isMatch($parent, $category, $specName)
-{
-    echo("<pre>Parent = $parent && spec = $specName</pre>\n");
-    if ($specName == "Inductance" && $parent == "inductors")
-        return true;
-    if ($specName == "Resistance" && $parent == "resistors")
-        return true;
-    if ($specName == "Capacitance" && $parent == "capacitors")
-        return true;
-    if ($specName == "Output Current" && ($parent == "power-management-ics" || $parent == "linear-ics"))
-        return true;
-    if ($specName == "Output Power" && $parent == "linear-ics")
-        return true;
-    if ($specName == "Density" && ($parent == "memory" || $parent == "embedded-processors-and-controllers"))
-        return true;
-    if ($parent == "emi-rfi-components") {
-        return ($specName == "DC Resistance (DCR)" || $specName == "Coil Resistance");
-    }
-    if ($parent == "crystals-and-oscillators") {
-        return ($specName == "Frequency");
-    }
-    if ($parent == "transistors") {
-        return ($specName == "Continuous Drain Current (ID)" || $specName == "Max Collector Current");
-    }
-    echo("<pre>FALSE</pre>\n");
-    return false;
-}
 
 if (isset($_POST["q"])) {
     $txt = $_POST['q'];

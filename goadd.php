@@ -3,6 +3,8 @@ if ((!isset($_POST["q"]) || strlen($_POST["q"]) == 0) && !isset($_POST["mpn"])) 
     header("Location: add.php");
     exit();
 }
+
+require('ismatch.php');
 require('mysqlConn.php');
 require('scan2id.php');
 require('nexarAPI.php');
@@ -18,32 +20,6 @@ $sql = "SELECT parts.id, parts.name, parts.description, types.name as type FROM 
 if (!isset($_POST["force"])) {
     $where = "WHERE parts.deleted=0 AND parts.name = \"$input\" OR parts.name LIKE \"%" . substr($input, 0, -1) . "%\"";
     $itemExists = $conn->query($sql . $where);
-}
-
-function isMatch($parent, $category, $specName)
-{
-    if ($specName == "Inductance" && $parent == "inductors")
-        return true;
-    if ($specName == "Resistance" && $parent == "resistors")
-        return true;
-    if ($specName == "Capacitance" && $parent == "capacitors")
-        return true;
-    if ($specName == "Output Current" && ($parent == "power-management-ics" || $parent == "linear-ics"))
-        return true;
-    if ($specName == "Output Power" && $parent == "linear-ics")
-        return true;
-    if ($specName == "Density" && ($parent == "memory" || $parent == "embedded-processors-and-controllers"))
-        return true;
-    if ($parent == "emi-rfi-components") {
-        return ($specName == "DC Resistance (DCR)" || $specName == "Coil Resistance");
-    }
-    if ($parent == "crystals-and-oscillators") {
-        return ($specName == "Frequency");
-    }
-    if ($parent == "transistors") {
-        return ($specName == "Continuous Drain Current (ID)" || $specName == "Max Collector Current");
-    }
-    return false;
 }
 
 $mpn = $input;
