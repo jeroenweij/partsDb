@@ -107,7 +107,7 @@ function addCondition($new)
 }
 
 if (!empty($input)) {
-    addCondition("parts.name LIKE \"%$input%\"");
+    addCondition("parts.name LIKE \"%$input%\" OR parts.description LIKE \"%$input%\"");
 }
 
 function checkSelected($item)
