@@ -16,7 +16,7 @@ if (isset($_POST["mpn"])){
     $unit = validateNumberInput($_POST["select-units"]);
     $deleted = isset($_POST["deleted"]) ? 1 : 0;
 
-    if (strlen($partNum) > 0 && strlen($description) > 0) {
+    if (strlen($partNum) > 0) {
         $sql = "UPDATE parts SET 
                  name='$partNum', description='$description', type='$type', value='$value', unit='$unit', 
                  package='$package', deleted='$deleted'

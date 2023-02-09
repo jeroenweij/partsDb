@@ -84,14 +84,7 @@ if (isset($_POST["del-project"])) {
     $project = validateNumberInput($_POST["del-project"]);
     $conn->query("DELETE FROM partproject WHERE part = $id AND project = $project;");
 }
-if (isset($_POST["del-tag"])) {
-    $tag = validateInput($_POST["del-tag"]);
-    $conn->query("DELETE FROM tags WHERE tag ='$tag';");
-}
-if (isset($_POST["new-tag"])) {
-    $tag = validateInput($_POST["new-tag"]);
-    $conn->query("INSERT INTO `tags` (`tag`, `part`) VALUES ('$tag', '$id');");
-}
+
 if (isset($_POST["select-projects"])) {
     $project = validateNumberInput($_POST["select-projects"]);
     $count = validateNumberInput($_POST["count"]);
@@ -366,47 +359,6 @@ if ($result && $result->num_rows > 0) {
             <?php printSelect("projects", ""); ?>
             <input name="count" type="text" value=""/>
             <input name="opslaan" type="submit" value="Link"/>
-        </form>
-    </div>
-    <?php
-    $sql = "SELECT tag FROM tags WHERE part=$id";
-    $tresult = $conn->query($sql);
-
-    if ($tresult && $tresult->num_rows > 0) {
-        ?>
-        <div>
-            <h3>Tags</h3>
-            <table class="styled-table">
-                <thead>
-                <tr>
-                    <th>Tag</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <?php
-                while ($prrow = $tresult->fetch_assoc()) {
-                    echo("<tr>\n");
-                    echo("<td>" . $prrow["tag"] . "</td>\n");
-                    echo("<td><form action=\"item.php\" method=\"post\">\n");
-                    echo("<input type=\"hidden\" name=\"id\" value=\"$id\">\n");
-                    echo("<input type=\"hidden\" name=\"del-tag\" value=\"" . $prrow["tag"] . "\">\n");
-                    echo("<input name=\"delete\" type=\"submit\" value=\"Delete\"  onclick=\"return confirm('Weet je het zeker?')\" />\n");
-                    echo("</form></td>\n");
-                    echo("</tr>\n");
-                }
-                ?>
-                </tbody>
-            </table>
-        </div>
-    <?php } ?>
-    <div>
-        <h3>Tag toevoegen</h3>
-
-        <form action="item.php" method="post">
-            <input type="hidden" name="id" value="<?php echo($id); ?>">
-            <input name="new-tag" type="text" value=""/>
-            <input name="opslaan" type="submit" value="opslaan"/>
         </form>
     </div>
     <div>

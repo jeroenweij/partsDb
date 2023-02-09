@@ -31,7 +31,6 @@ if (isset($_POST["mpn"])) {
     $unit = validateNumberInput($_POST["select-units"]);
     $location = validateNumberInput($_POST["select-locations"]);
     $sublocation = validateNumberInput($_POST["sublocation"]);
-    $tag = validateInput($_POST["tag"]);
 
     $query = "INSERT INTO `parts` 
            (`name`, `description`,  `type`,  `value`,  `package`,  `unit`) 
@@ -52,11 +51,6 @@ if (isset($_POST["mpn"])) {
             // Add stock
             if ($stock > 0) {
                 $conn->query("INSERT INTO `stock` (`partId`, `location`, `sublocation`, `count`) VALUES ('$partid', '$location', '$sublocation', '$stock');");
-            }
-
-            // Add Tag
-            if (strlen($tag) > 2) {
-                $conn->query("INSERT INTO `tags` (`tag`, `part`) VALUES ('$tag', '$partid');");
             }
 
             // Add projects

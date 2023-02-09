@@ -231,9 +231,6 @@ if ($itemExists && $itemExists->num_rows > 0) {
             </tr>
         </table>
 
-        <h4>Tag</h4>
-        <input type="text" name="tag" value=""/>
-
         <h4>Gebruikt in</h4>
         <table>
             <tr>

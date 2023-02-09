@@ -15,6 +15,7 @@ $pageLimit = 50;
 $pageNum = 0;
 $sublocation = 0;
 $instock = false;
+$ordervalue = false;
 
 if (array_key_exists('pageLimit', $_POST)) {
     $pageLimit = filter_input(INPUT_POST, 'pageLimit', FILTER_SANITIZE_NUMBER_INT);
@@ -31,6 +32,9 @@ if (array_key_exists('sublocation', $_POST)) {
 if (array_key_exists('instock', $_POST)) {
     $instock = filter_input(INPUT_POST, 'instock', FILTER_VALIDATE_BOOLEAN);
 }
+if (array_key_exists('order-value', $_POST)) {
+    $ordervalue = filter_input(INPUT_POST, 'order-value', FILTER_VALIDATE_BOOLEAN);
+}
 
 function printFilterSelect($table, $name)
 {
@@ -41,6 +45,7 @@ function printFilterSelect($table, $name)
         $selectedValue = filter_input(INPUT_POST, $itemname, FILTER_SANITIZE_NUMBER_INT);
     }
 
+    echo("<label style=\"display: inline-block\">\n");
     echo("$name ");
     echo "<select name=\"$itemname\">\n";
     echo "<option value=\"0\">All</option>\n";
@@ -53,6 +58,7 @@ function printFilterSelect($table, $name)
     }
     $stmt->close();
     echo "</select>\n";
+    echo("</label>\n");
 }
 
 function printSublocaton($selectedValue)
@@ -91,8 +97,17 @@ function printSublocaton($selectedValue)
             }
             ?>
             <label style="display: inline-block">
-                <input id="checkbox_id" type="checkbox" name="instock" <?php echo("$checked"); ?> />
+                <input type="checkbox" name="instock" <?php echo("$checked"); ?> />
                 op&nbsp;voorraad
+            </label>
+            <label style="display: inline-block"><?php
+                $checked = "";
+                if (isset($_POST["order-value"])) {
+                    $checked = "checked";
+                }
+                ?>
+                <input type="checkbox" name="order-value" <?php echo("$checked"); ?> />
+                sorteer waarde
             </label>
             <input name="" type="submit" value="Filters toepassen" style="float: right"/>
         </form>
@@ -118,7 +133,6 @@ function checkSelected($item)
         addCondition("$item.id='$selectedValue'");
     }
 }
-
 
 checkSelected("types");
 checkSelected("packages");
@@ -149,7 +163,7 @@ $from = "parts
         LEFT JOIN partproject ON parts.id=partproject.part
         LEFT JOIN projects ON partproject.project=projects.id";
 
-$where = "parts.deleted=0 $condition";
+$where = "parts.deleted=0 AND (stock.deleted=0 OR stock.deleted IS NULL) $condition";
 
 $sql = "SELECT $select FROM $from WHERE $where";
 
@@ -165,7 +179,11 @@ if ($pageNum * $pageLimit > $count) {
     $pageNum = 0;
 }
 
-$sql = $sql . " GROUP BY parts.id ORDER BY parts.id ASC LIMIT ? OFFSET ?";
+$order = "parts.id";
+if ($ordervalue) {
+    $order = "parts.value";
+}
+$sql = $sql . " GROUP BY parts.id ORDER BY $order ASC LIMIT ? OFFSET ?";
 $stmt = $conn->prepare($sql);
 $offset = $pageNum * $pageLimit;
 $stmt->bind_param("ii", $pageLimit, $offset);
@@ -227,56 +245,57 @@ if ($result && $result->num_rows > 0) {
     Totaal: <?php echo($count); ?> onderdelen.
 
     <div style="float: right">
-    <form action="" method="post">
-        <?php
-        function addFilter($name)
-        {
-            if (isset($_POST[$name])) {
-                echo("<input type=\"hidden\" name=\"$name\" value=\"" . $_POST[$name] . "\" />\n");
-            }
-        }
-
-        addFilter("q");
-        addFilter("view-types");
-        addFilter("view-packages");
-        addFilter("view-units");
-        addFilter("view-projects");
-        addFilter("view-locations");
-        addFilter("sublocation");
-        addFilter("instock");
-
-        if ($count > $pageLimit) {
-            $pages = ceil($count / $pageLimit);
-            echo('<label>Pagina<select name="pageNum">');
-            for ($i = 0; $i < $pages; $i++) {
-                if ($i == $pageNum) {
-                    echo("<option selected>$i</option>\n");
-                } else {
-                    echo("<option>$i</option>\n");
+        <form action="" method="post">
+            <?php
+            function addFilter($name)
+            {
+                if (isset($_POST[$name])) {
+                    echo("<input type=\"hidden\" name=\"$name\" value=\"" . $_POST[$name] . "\" />\n");
                 }
             }
-            echo('</select></label>&nbsp;');
-        } else {
-            echo('<input name="pageNum" type="hidden" value="0" />');
-        }
-        ?>
-        <label>
-            Aantal per pagina:
-            <select name="pageLimit">
-                <?php
-                $pagesizes = array(10, 25, 50, 100, 250, 500, 1000);
-                foreach ($pagesizes as $i) {
-                    if ($i == $pageLimit) {
+
+            addFilter("q");
+            addFilter("view-types");
+            addFilter("view-packages");
+            addFilter("view-units");
+            addFilter("view-projects");
+            addFilter("view-locations");
+            addFilter("sublocation");
+            addFilter("instock");
+            addFilter("order-value");
+
+            if ($count > $pageLimit) {
+                $pages = ceil($count / $pageLimit);
+                echo('<label>Pagina<select name="pageNum">');
+                for ($i = 0; $i < $pages; $i++) {
+                    if ($i == $pageNum) {
                         echo("<option selected>$i</option>\n");
                     } else {
                         echo("<option>$i</option>\n");
                     }
                 }
-                ?>
-            </select>
-        </label>
-        <input name="submit" type="submit" value="Ga"/>
-    </form>
+                echo('</select></label>&nbsp;');
+            } else {
+                echo('<input name="pageNum" type="hidden" value="0" />');
+            }
+            ?>
+            <label>
+                Aantal per pagina:
+                <select name="pageLimit">
+                    <?php
+                    $pagesizes = array(10, 25, 50, 100, 250, 500, 1000);
+                    foreach ($pagesizes as $i) {
+                        if ($i == $pageLimit) {
+                            echo("<option selected>$i</option>\n");
+                        } else {
+                            echo("<option>$i</option>\n");
+                        }
+                    }
+                    ?>
+                </select>
+            </label>
+            <input name="submit" type="submit" value="Ga"/>
+        </form>
     </div>
     <?php
 

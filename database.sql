@@ -192,17 +192,6 @@ CREATE TABLE `stock` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tags`
---
-
-CREATE TABLE `tags` (
-  `tag` varchar(32) NOT NULL,
-  `part` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `types`
 --
 
