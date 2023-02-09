@@ -46,6 +46,9 @@ if (isset($_POST["mpn"])) {
             $partid = $row["id"];
             echo("<a href=\"item.php?id=$partid\">$partNum openen.</a>");
 
+            if ($location != 0 && $stock == 0) {
+                $stock = 1;
+            }
             // Add stock
             if ($stock > 0) {
                 $conn->query("INSERT INTO `stock` (`partId`, `location`, `sublocation`, `count`) VALUES ('$partid', '$location', '$sublocation', '$stock');");

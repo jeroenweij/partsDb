@@ -39,7 +39,23 @@ if (isset($_POST["diff"])) {
     }
 }
 
-if (isset($_POST["select-locations"])) {
+if (isset($_POST["save"])) { // if moving stock
+    $location = validateNumberInput($_POST["select-locations"]);
+    $subloc = validateNumberInput($_POST["sublocation"]);
+    $stid = validateNumberInput($_POST["move-id"]);
+    $count = validateNumberInput($_POST["count"]);
+
+    $sql = "UPDATE stock SET count=0, deleted=1 WHERE id = $stid";
+    $conn->query($sql);
+
+    $conn->query("INSERT INTO stock (partId, location, sublocation, count) SELECT $id, $location, $subloc, 0
+        FROM DUAL WHERE NOT EXISTS (
+        SELECT count FROM stock WHERE partId = $id AND location = $location AND sublocation = $subloc);");
+
+    $sql = "UPDATE stock SET count=count + $count, deleted=0 WHERE partId = $id AND location = $location AND sublocation = $subloc";
+    $conn->query($sql);
+
+} else if (isset($_POST["select-locations"])) { // if adding new stock
     $location = validateNumberInput($_POST["select-locations"]);
     $subloc = validateNumberInput($_POST["sublocation"]);
     $count = validateNumberInput($_POST["count"]);
@@ -132,7 +148,7 @@ if ($result && $result->num_rows > 0) {
     // Stock table
     $location = "-";
     $subloc = "";
-    $stockresult = $conn->query("SELECT stock.id, stock.sublocation, stock.count, locations.name as location FROM stock LEFT JOIN locations ON stock.location=locations.id WHERE (stock.deleted=0 OR stock.count>0) AND stock.partId = " . $row["id"]);
+    $stockresult = $conn->query("SELECT stock.id, stock.sublocation, stock.count, locations.name as location, locations.id as locid FROM stock LEFT JOIN locations ON stock.location=locations.id WHERE (stock.deleted=0 OR stock.count>0) AND stock.partId = " . $row["id"]);
     if ($stockresult && $stockresult->num_rows > 0) {
         ?>
         <div>
@@ -144,6 +160,7 @@ if ($result && $result->num_rows > 0) {
                     <th>Voorraad</th>
                     <th>Aanpassen</th>
                     <th>Verbergen</th>
+                    <th>Verplaatsen</th>
                     <th>Label</th>
                 </tr>
                 </thead>
@@ -170,6 +187,7 @@ if ($result && $result->num_rows > 0) {
                     <td>
                         <?php if ($stockrow["count"] == 0) { ?>
                             <form method="post">
+                                <input type="hidden" name="id" value="<?php echo($id); ?>">
                                 <input type="hidden" name="del-id" value="<?php echo($stockrow["id"]); ?>"/>
                                 <input name="delete" type="submit" value="Verbergen"
                                        onclick="return confirm('Weet je het zeker?')"/>
@@ -177,7 +195,29 @@ if ($result && $result->num_rows > 0) {
                         <?php } ?>
                     </td>
                     <td>
-                        <?php printprintbutton($id, $row["name"], $row["type"], $value, $package,"$location $subloc"); ?>
+                        <form method="post">
+                            <?php
+                            if (isset($_POST["save"]) || !isset($_POST["move-id"]) || $_POST["move-id"] != $stockrow["id"]) {
+                                ?>
+                                <input type="hidden" name="id" value="<?php echo($id); ?>">
+                                <input type="hidden" name="move-id" value="<?php echo($stockrow["id"]); ?>"/>
+                                <input name="delete" type="submit" value="Move"/>
+                                <?php
+                            } else {
+                                ?>
+                                <input type="hidden" name="id" value="<?php echo($id); ?>">
+                                <input type="hidden" name="count" value="<?php echo($stockrow["count"]); ?>">
+                                <input type="hidden" name="move-id" value="<?php echo($stockrow["id"]); ?>"/>
+                                <?php printSelect("locations", $stockrow["locid"]);
+                                printSublocaton($subloc); ?>
+                                <input name="save" type="submit" value="Save"/>
+                                <?php
+                            }
+                            ?>
+                        </form>
+                    </td>
+                    <td>
+                        <?php printprintbutton($id, $row["name"], $row["type"], $value, $package, "$location $subloc"); ?>
                     </td>
                     <?php
                     echo("</tr>\n");
