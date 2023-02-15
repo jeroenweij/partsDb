@@ -8,7 +8,7 @@ function isMatch($parent, $category, $specName, $debug=false)
         return true;
     if ($specName == "Resistance" && ($parent == "resistors" || $category=="Resistor"))
         return true;
-    if ($specName == "Capacitance" && ($parent == "capacitors" || $category=="Capacitor"))
+    if ($specName == "Capacitance" && ($parent == "capacitors" || $category=="Capacitor" || $category=="Capacitors"))
         return true;
     if ($specName == "Output Current" && ($parent == "power-management-ics" || $parent == "linear-ics"))
         return true;
