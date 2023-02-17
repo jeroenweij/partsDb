@@ -11,7 +11,7 @@ $value = $_POST["value"];
 $package = $_POST["package"];
 $loc = $_POST["loc"];
 
-$value = str_replace(array("Ω", "µ"), array("Ohm", "u"), $value);
+$value = str_replace(array("Ω", "µ", "°"), array("Ohm", "u", ""), $value);
 if (strlen(trim($loc)) < 2) $loc = "";
 if (strlen(trim($package)) < 2) $package = "";
 if (str_ends_with($value, "-")) $value = "";
