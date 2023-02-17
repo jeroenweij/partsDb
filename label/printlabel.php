@@ -50,15 +50,16 @@ if ($retval != 0 || !file_exists($filename)) {
     $printername = getenv('labelprinter', true);
     $command = "lp -d $printername $filename";
     exec($command, $output, $retval);
-    unlink($filename);
-    if ($retval != 0 || !file_exists($filename)) {
+    if ($retval != 0) {
         echo("<pre>\n");
         echo("$command\n");
         echo("Returned with status $retval\n and output:\n\n");
         print_r($output);
         echo("</pre>");
+        echo("<a href=\"$filename\">Label bekijken</a>");
     } else {
-        header("Location: $filename");
+        unlink($filename);
+        echo("<script type=\"text/javascript\" charset=\"utf-8\">window.self.close()</script>");
     }
 }
 ?>
