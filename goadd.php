@@ -78,7 +78,7 @@ if (!$itemExists || $itemExists->num_rows == 0) {
                                 if (!$valueSet && isMatch($parent, $category, $spec["attribute"]["name"])) {
                                     if ($spec["valueType"] == "number" || $spec["valueType"] == "float" || $spec["valueType"] == "integer") {
                                         $value = $spec["value"];
-                                        if ($parent == "connectors") {
+                                        if ($parent == "connectors" || $category == "Connectors") {
                                             $valueUnit = "pins";
                                         } else {
                                             $valueUnit = $spec["units"];
