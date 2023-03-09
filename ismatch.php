@@ -25,7 +25,7 @@ function isMatch($parent, $category, $specName, $debug=false)
     if ($parent == "transistors") {
         return ($specName == "Continuous Drain Current (ID)" || $specName == "Max Collector Current");
     }
-    if ($parent == "connectors") {
+    if ($parent == "connectors" || $category=="Connectors") {
         return ($specName == "Number of Pins" || $specName == "Number of Contacts");
     }
     if ($debug)
