@@ -26,7 +26,7 @@ function isMatch($parent, $category, $specName, $debug=false)
         return ($specName == "Continuous Drain Current (ID)" || $specName == "Max Collector Current");
     }
     if ($parent == "connectors") {
-        return ($specName == "Number of Pins");
+        return ($specName == "Number of Pins" || $specName == "Number of Contacts");
     }
     if ($debug)
         echo("<pre>FALSE</pre>\n");
