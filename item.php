@@ -155,6 +155,7 @@ if ($result && $result->num_rows > 0) {
                     <th>Verbergen</th>
                     <th>Verplaatsen</th>
                     <th>Label</th>
+                    <th>View</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -211,6 +212,9 @@ if ($result && $result->num_rows > 0) {
                     </td>
                     <td>
                         <?php printprintbutton($id, $row["name"], $row["type"], $value, $package, "$location $subloc"); ?>
+                    </td>
+                    <td>
+                        <?php printviewbutton($id, $row["name"], $row["type"], $value, $package, "$location $subloc"); ?>
                     </td>
                     <?php
                     echo("</tr>\n");

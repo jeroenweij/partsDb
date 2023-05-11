@@ -24,4 +24,22 @@ function printprintbutton($id, $mpn, $type, $value, $package, $location): void
     <?php
 }
 
+
+function printviewbutton($id, $mpn, $type, $value, $package, $location): void
+{
+    ?>
+    <div>
+        <form action="label/viewlabel.php" method="post" onsubmit="target_popup(this)">
+            <input type="hidden" name="id" value="<?php echo($id); ?>"/>
+            <input type="hidden" name="mpn" value="<?php echo($mpn); ?>"/>
+            <input type="hidden" name="type" value="<?php echo($type); ?>"/>
+            <input type="hidden" name="value" value="<?php echo($value); ?>"/>
+            <input type="hidden" name="package" value="<?php echo($package); ?>"/>
+            <input type="hidden" name="loc" value="<?php echo($location); ?>"/>
+            <input name="save" type="submit" value="View label"/>
+        </form>
+    </div>
+    <?php
+}
+
 ?>
