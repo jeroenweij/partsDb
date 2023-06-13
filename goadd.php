@@ -18,7 +18,7 @@ printHeader("Toevoegen");
 $itemExists = null;
 $sql = "SELECT parts.id, parts.name, parts.description, types.name as type FROM parts LEFT JOIN types ON parts.type=types.id ";
 if (!isset($_POST["force"])) {
-    $where = "WHERE parts.deleted=0 AND parts.name = \"$input\" OR parts.name LIKE \"%" . substr($input, 0, -1) . "%\"";
+    $where = "WHERE parts.deleted=0 AND (parts.name = \"$input\" OR parts.name LIKE \"%" . substr($input, 0, -1) . "%\")";
     $itemExists = $conn->query($sql . $where);
 }
 
@@ -142,7 +142,7 @@ require('formFunctions.php');
 if ($input != $mpn) {
     if (!isset($_POST["force"])) {
         if (!$itemExists || $itemExists->num_rows == 0) {
-            $where = "WHERE parts.deleted=0 AND parts.name = \"$mpn\" OR parts.name LIKE \"%" . substr($mpn, 0, -1) . "%\"";
+            $where = "WHERE parts.deleted=0 AND (parts.name = \"$mpn\" OR parts.name LIKE \"%" . substr($mpn, 0, -1) . "%\")";
             $itemExists = $conn->query($sql . $where);
         }
     }
