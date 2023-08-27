@@ -33,13 +33,13 @@ fputcsv($datafile, $data, $csvdelimiter);
 
 fclose($datafile);
 
-$command = "glabels-3-batch --input=$datafilename label.glabels";
+$filename = "output.pdf";
+$command = "QT_QPA_PLATFORM=offscreen glabels-batch-qt label.glabels -o $filename";
 $output = null;
 $retval = null;
 exec($command, $output, $retval);
 unlink($datafilename);
 
-$filename = "output.pdf";
 if ($retval != 0 || !file_exists($filename)) {
     echo("<pre>\n");
     echo("$command\n");

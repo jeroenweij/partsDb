@@ -33,33 +33,20 @@ fputcsv($datafile, $data, $csvdelimiter);
 
 fclose($datafile);
 
-$command = "glabels-3-batch --input=$datafilename label.glabels";
+$printername = getenv('labelprinter', true);
+$command = "QT_QPA_PLATFORM=offscreen glabels-batch-qt label.glabels -p \"$printername\"";
 $output = null;
 $retval = null;
 exec($command, $output, $retval);
 unlink($datafilename);
 
-$filename = "output.pdf";
-if ($retval != 0 || !file_exists($filename)) {
+if ($retval != 0 ) {
     echo("<pre>\n");
     echo("$command\n");
     echo("Returned with status $retval\n and output:\n\n");
     print_r($output);
     echo("</pre>");
 } else {
-    $printername = getenv('labelprinter', true);
-    $command = "lp -d $printername $filename";
-    exec($command, $output, $retval);
-    if ($retval != 0) {
-        echo("<pre>\n");
-        echo("$command\n");
-        echo("Returned with status $retval\n and output:\n\n");
-        print_r($output);
-        echo("</pre>");
-        echo("<a href=\"$filename\">Label bekijken</a>");
-    } else {
-        unlink($filename);
-        echo("<script type=\"text/javascript\" charset=\"utf-8\">window.self.close()</script>");
-    }
+    echo("<script type=\"text/javascript\" charset=\"utf-8\">window.self.close()</script>");
 }
 ?>
