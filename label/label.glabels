@@ -7,24 +7,24 @@
     </Label-rectangle>
   </Template>
   <Objects id="0" rotate="true">
-    <Object-text line_spacing="1" w="69.8268pt" shadow="false" shadow_opacity="1" font_underline="false" a5="0" lock_aspect_ratio="false" align="left" y="53.8583pt" shadow_y="0pt" color="0xff" auto_shrink="true" a2="0" shadow_x="0pt" shadow_color="0x0" font_size="14" a4="0" a0="1" font_italic="false" wrap="word" h="28pt" a1="0" valign="top" font_weight="bold" x="14.1732pt" a3="1" font_family="Sans">
+    <Object-text line_spacing="1" w="69.8268pt" shadow="false" shadow_opacity="1" font_underline="false" a5="0" lock_aspect_ratio="false" align="left" y="53.9433pt" shadow_y="0pt" color="0xff" auto_shrink="true" a2="0" shadow_x="0pt" shadow_color="0x0" font_size="14" a4="0" a0="1" font_italic="false" wrap="word" h="28pt" a1="0" valign="top" font_weight="bold" x="7.17163pt" a3="1" font_family="Sans">
       <p>${id}</p>
     </Object-text>
-    <Object-text line_spacing="1" w="163.827pt" shadow="false" shadow_opacity="1" font_underline="false" a5="0" lock_aspect_ratio="false" align="left" y="2.83465pt" shadow_y="0pt" color="0xff" auto_shrink="true" a2="0" shadow_x="0pt" shadow_color="0x0" font_size="11" a4="0" a0="1" font_italic="false" wrap="word" h="23pt" a1="0" valign="vcenter" font_weight="normal" x="14.1732pt" a3="1" font_family="Sans">
+    <Object-text line_spacing="1" w="163.827pt" shadow="false" shadow_opacity="1" font_underline="false" a5="0" lock_aspect_ratio="false" align="left" y="2.83465pt" shadow_y="0pt" color="0xff" auto_shrink="true" a2="0" shadow_x="0pt" shadow_color="0x0" font_size="11" a4="0" a0="1" font_italic="false" wrap="word" h="23pt" a1="0" valign="vcenter" font_weight="normal" x="7.17163pt" a3="1" font_family="Sans">
       <p>${mpn}</p>
     </Object-text>
-    <Object-barcode w="68.0315pt" style="qrcode" a5="0" h="68.0315pt" text="false" x="172.583pt" checksum="true" a0="1" backend="qrencode" a2="0" a3="1" color="0xff" data="${barcode}" a4="0" lock_aspect_ratio="false" y="5.66929pt" a1="0"/>
-    <Object-line shadow_opacity="1" shadow_x="0pt" a5="0" shadow_y="0pt" line_color="0xff" shadow="false" x="5.66929pt" a0="1" dx="164.331pt" a2="0" a3="1" shadow_color="0x0" a4="0" line_width="0.5pt" y="21.2381pt" a1="0" dy="0pt"/>
-    <Object-text line_spacing="1" w="161.827pt" shadow="false" shadow_opacity="1" font_underline="false" a5="0" lock_aspect_ratio="false" align="left" y="19.8425pt" shadow_y="0pt" color="0xff" auto_shrink="true" a2="0" shadow_x="0pt" shadow_color="0x0" font_size="9" a4="0" a0="1" font_italic="false" wrap="word" h="21pt" a1="0" valign="top" font_weight="normal" x="14.1732pt" a3="1" font_family="Sans">
+    <Object-barcode w="68.0315pt" style="qrcode" a5="0" h="68.0315pt" text="false" x="166.574pt" checksum="true" a0="1" backend="qrencode" a2="0" a3="1" color="0xff" data="${barcode}" a4="0" lock_aspect_ratio="false" y="5.66929pt" a1="0"/>
+    <Object-line shadow_opacity="1" shadow_x="0pt" a5="0" shadow_y="0pt" line_color="0xff" shadow="false" x="5.66929pt" a0="1" dx="158.331pt" a2="0" a3="1" shadow_color="0x0" a4="0" line_width="0.5pt" y="22.5512pt" a1="0" dy="1.23808pt"/>
+    <Object-text line_spacing="1" w="161.827pt" shadow="false" shadow_opacity="1" font_underline="false" a5="0" lock_aspect_ratio="false" align="left" y="19.8425pt" shadow_y="0pt" color="0xff" auto_shrink="true" a2="0" shadow_x="0pt" shadow_color="0x0" font_size="9" a4="0" a0="1" font_italic="false" wrap="word" h="21pt" a1="0" valign="top" font_weight="normal" x="7.17163pt" a3="1" font_family="Sans">
       <p>${type}</p>
     </Object-text>
-    <Object-text line_spacing="1" w="103pt" shadow="false" shadow_opacity="1" font_underline="false" a5="0" lock_aspect_ratio="false" align="right" y="57.3622pt" shadow_y="0pt" color="0xff" auto_shrink="true" a2="0" shadow_x="0pt" shadow_color="0x0" font_size="9" a4="0" a0="1" font_italic="false" wrap="word" h="21pt" a1="0" valign="top" font_weight="normal" x="73pt" a3="1" font_family="Sans">
+    <Object-text line_spacing="1" w="103pt" shadow="false" shadow_opacity="1" font_underline="false" a5="0" lock_aspect_ratio="false" align="right" y="57.5039pt" shadow_y="0pt" color="0xff" auto_shrink="true" a2="0" shadow_x="0pt" shadow_color="0x0" font_size="9" a4="0" a0="1" font_italic="false" wrap="word" h="21pt" a1="0" valign="top" font_weight="normal" x="65.9984pt" a3="1" font_family="Sans">
       <p>${location}</p>
     </Object-text>
-    <Object-text line_spacing="1" w="69.8268pt" shadow="false" shadow_opacity="1" font_underline="false" a5="0" lock_aspect_ratio="false" align="left" y="36.8504pt" shadow_y="0pt" color="0xff" auto_shrink="true" a2="0" shadow_x="0pt" shadow_color="0x0" font_size="9" a4="0" a0="1" font_italic="false" wrap="word" h="21pt" a1="0" valign="top" font_weight="normal" x="14.1732pt" a3="1" font_family="Sans">
+    <Object-text line_spacing="1" w="69.8268pt" shadow="false" shadow_opacity="1" font_underline="false" a5="0" lock_aspect_ratio="false" align="left" y="37.1339pt" shadow_y="0pt" color="0xff" auto_shrink="true" a2="0" shadow_x="0pt" shadow_color="0x0" font_size="9" a4="0" a0="1" font_italic="false" wrap="word" h="21pt" a1="0" valign="top" font_weight="normal" x="7.17163pt" a3="1" font_family="Sans">
       <p>${value}</p>
     </Object-text>
-    <Object-text line_spacing="1" w="92.0216pt" shadow="false" shadow_opacity="1" font_underline="false" a5="0" lock_aspect_ratio="false" align="right" y="36.8504pt" shadow_y="0pt" color="0xff" auto_shrink="true" a2="0" shadow_x="0pt" shadow_color="0x0" font_size="9" a4="0" a0="1" font_italic="false" wrap="word" h="21pt" a1="0" valign="top" font_weight="normal" x="83.9953pt" a3="1" font_family="Sans">
+    <Object-text line_spacing="1" w="92.0216pt" shadow="false" shadow_opacity="1" font_underline="false" a5="0" lock_aspect_ratio="false" align="right" y="37.1339pt" shadow_y="0pt" color="0xff" auto_shrink="true" a2="0" shadow_x="0pt" shadow_color="0x0" font_size="9" a4="0" a0="1" font_italic="false" wrap="word" h="21pt" a1="0" valign="top" font_weight="normal" x="76.9937pt" a3="1" font_family="Sans">
       <p>${package}</p>
     </Object-text>
   </Objects>
