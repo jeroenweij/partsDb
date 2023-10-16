@@ -90,7 +90,7 @@ if ($result && $result->num_rows > 0) {
         (SELECT SUM(count) FROM extstock WHERE extstock.part=parts.id AND extstock.relation=" . $row["relation"] . ") as extstock
             FROM parts 
             LEFT JOIN orderpart ON orderpart.part=parts.id 
-            WHERE orderpart.count > 0 AND parts.deleted=0 AND orderpart.orderId=$id";
+            WHERE orderpart.count > 0 AND parts.deleted=0 AND orderpart.orderId=$id ORDER BY parts.id ASC";
         $result = $conn->query($sql);
         if ($result && $result->num_rows > 0) {
             ?>
