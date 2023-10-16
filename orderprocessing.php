@@ -100,6 +100,7 @@ if ($result && $result->num_rows > 0) {
                 <table class="styled-table">
                     <thead>
                     <tr>
+                        <th>Id</th>
                         <th>Component</th>
                         <th>Externe voorraad</th>
                         <th>Verstuurd</th>
@@ -115,6 +116,7 @@ if ($result && $result->num_rows > 0) {
                         $loss = max(round($prow["count"] * $losspercentage / 100), $lossminimum);
                         $new = max($prow["extstock"] + $prow["packed"] - ($prow["count"] + $loss), 0);
                         echo("<tr>\n");
+                        echo("<td><a href='item.php?id=$pid'>$pid</a></td>\n");
                         echo("<td><a href='item.php?id=$pid'>" . $prow["name"] . "</a></td>\n");
                         echo("<td>" . $prow["extstock"] . "</td>\n");
                         echo("<td>" . $prow["packed"] . "</td>\n");
