@@ -14,6 +14,7 @@ use Dompdf\Options;
 $id = $_POST["id"];
 
 $sql = "SELECT orders.name, orders.relation, companys.logo, relations.contact,
+        companys.short as shortname,
         companys.address as companyaddress, 
         relations.address as relationaddress,
         companys.name as companyname,
@@ -97,6 +98,7 @@ table {
         <thead>
             <tr>
                 <th style='text-align: left; width: 50px;'>#</th>
+                <th style='text-align: left; width: 50px;'>" . $row["shortname"] . " id</th>
                 <th style='text-align: left; width: 75px;'>Aantal</th>
                 <th style='text-align: left'>Beschrijving</th>
             </tr>
@@ -104,7 +106,7 @@ table {
         <tbody>";
 
 // List parts
-$sql = "SELECT parts.name, orderpart.packed
+$sql = "SELECT parts.id, parts.name, orderpart.packed
             FROM parts 
             LEFT JOIN orderpart ON orderpart.part=parts.id 
             WHERE orderpart.count > 0 AND parts.deleted=0 AND orderpart.orderId=$id";
@@ -115,6 +117,7 @@ if ($result && $result->num_rows > 0) {
     while ($prow = $result->fetch_assoc()) {
         $html=$html."<tr>\n";
         $html=$html."<td'>" . $i . "</td>\n";
+        $html=$html."<td>" . $prow["id"] . "</td>\n";
         $html=$html."<td>" . $prow["packed"] . "</td>\n";
         $html=$html."<td>" . $prow["name"] . "</td>\n";
         $html=$html."</tr>\n";
