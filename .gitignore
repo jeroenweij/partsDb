@@ -6,4 +6,5 @@ label/data.csv
 label/output.pdf
 
 scanner/linux/build/
+scanner/linux/buildusb/
 *.user

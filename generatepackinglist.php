@@ -30,11 +30,6 @@ if ($result && $result->num_rows > 0) {
 $name = "naam";
 $quantity = 4;
 
-//$html = '<h1 style="color: green">Example</h1>';
-//$html .= "Hello <em>$name</em>";
-//$html .= '<img src="example.png">';
-//$html .= "Quantity: $quantity";
-
 /**
  * Set the Dompdf options
  */
@@ -74,7 +69,7 @@ table {
     </style>
 </head>
 <body>
-<div style='float: right'> <img style='width:200px' src='extimg/" . $row["logo"] . "'></div>
+<div style='float: right'> <img style='width:250px' src='extimg/" . $row["logo"] . "'></div>
     <h1>Pakbon</h1>
     <b>" . $row["relationname"] . "</b>
     <p>" . $row["contact"] . "<br>\n" . str_replace("\n", "<br>\n", $row["relationaddress"]) . "</p>

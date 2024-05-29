@@ -266,7 +266,6 @@ int main()
             }
             if (i < (sizeof(keymap) / sizeof(struct Key)))
             {
-                printf("key = %d\n",keymap[i].code);
                 send_key(uinput_fd, i);
             }
         }

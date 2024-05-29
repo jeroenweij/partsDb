@@ -20,7 +20,6 @@ if (isset($_POST["pageNum"])) {
     $pageNum = $_POST["pageNum"];
 }
 
-
 $sql = "SELECT orders.id, orders.name,
        companys.name as company,
        relations.name as relation,
@@ -29,7 +28,7 @@ $sql = "SELECT orders.id, orders.name,
         LEFT JOIN relations ON orders.relation=relations.id
         LEFT JOIN companys ON orders.company=companys.id
         LEFT JOIN statuses ON orders.status=statuses.id
-        WHERE orders.status<5 ";
+        WHERE orders.status<5";
 
 $condition = "";
 function checkSelected($item)
@@ -62,7 +61,7 @@ if ($pageNum * $pageLimit > $count) {
     $pageNum = 0;
 }
 
-$sql = $sql . "$condition ORDER BY orders.id ASC LIMIT $pageLimit";
+$sql = $sql . "$condition ORDER BY orders.id DESC LIMIT $pageLimit";
 $sql = $sql . " OFFSET " . ($pageLimit * $pageNum);
 
 $result = $conn->query($sql);
