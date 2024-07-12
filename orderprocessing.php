@@ -144,14 +144,14 @@ if ($result && $result->num_rows > 0) {
 
                         $stockresult = $conn->query("Select stock.id, locations.name, sublocation FROM stock LEFT JOIN locations ON stock.location = locations.id WHERE stock.deleted=0 AND stock.partId=$pid;");
                         if ($stockresult && $stockresult->num_rows > 0) {
-                            echo("<table>\n");
+                            echo("<td><table>\n");
                             while ($stockrow = $stockresult->fetch_assoc()) {
                                 echo("<tr>\n");
                                 echo("<td>". $stockrow["name"] . "-". $stockrow["sublocation"] . "</td>\n");
                                 echo("<td><input type='text' value='$new' name='newstock-". $stockrow["id"] . "-$pid' /></td>\n");
                                 echo("</tr>\n");
                             }
-                            echo("</table>\n");
+                            echo("</table></td>\n");
 
                         } else {
                             echo("<td>geen lokatie</td>\n");
