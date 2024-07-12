@@ -25,11 +25,27 @@ if (isset($_POST["relation"])) {
     if ($result && $result->num_rows > 0) {
         while ($prow = $result->fetch_assoc()) {
             $pid = $prow["id"];
-            $new = "";
-            if (isset($_POST["newstock-$pid"])) {
-                $new = validateNumberInput($_POST["newstock-$pid"]);
+
+            $stockresult = $conn->query("Select stock.id, count FROM stock WHERE stock.deleted=0 AND stock.partId=$pid;");
+            if ($stockresult && $stockresult->num_rows > 0) {
+                while ($stockrow = $stockresult->fetch_assoc()) {
+                    $new = "";
+                    if (isset($_POST["newstock-". $stockrow["id"] . "-$pid"])) {
+                        $new = validateNumberInput($_POST["newstock-". $stockrow["id"] . "-$pid"]);
+                        $new += $stockrow["count"];
+                    }
+                    if (strlen($new) > 0) {
+                        $conn->query("UPDATE stock SET count=$new WHERE id=". $stockrow["id"] . ";");
+                    }
+                }
             }
-            if (strlen($new) > 0) {
+
+
+            $newext = "";
+            if (isset($_POST["newstock-$pid"])) {
+                $newext = validateNumberInput($_POST["newextstock-$pid"]);
+            }
+            if (strlen($newext) > 0) {
                 $conn->query("INSERT INTO extstock (part, relation, count) SELECT $pid, $relation, 0
                                     FROM DUAL WHERE NOT EXISTS (
                                     SELECT count FROM extstock WHERE part = $pid AND relation = $relation);");
@@ -106,7 +122,8 @@ if ($result && $result->num_rows > 0) {
                         <th>Verstuurd</th>
                         <th>Verbruikt</th>
                         <th>Verlies</th>
-                        <th>Nieuwe externe voorraad</th>
+                        <th>Externe voorraad</th>
+                        <th>Teruggekomen</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -122,7 +139,24 @@ if ($result && $result->num_rows > 0) {
                         echo("<td>" . $prow["packed"] . "</td>\n");
                         echo("<td>" . $prow["count"] . "</td>\n");
                         echo("<td>$loss</td>\n");
-                        echo("<td><input type='text' value='$new' name='newstock-$pid' /></td>\n");
+                        echo("<td><input type='text' name='newextstock-$pid' /></td>\n");
+
+
+                        $stockresult = $conn->query("Select stock.id, locations.name, sublocation FROM stock LEFT JOIN locations ON stock.location = locations.id WHERE stock.deleted=0 AND stock.partId=$pid;");
+                        if ($stockresult && $stockresult->num_rows > 0) {
+                            echo("<table>\n");
+                            while ($stockrow = $stockresult->fetch_assoc()) {
+                                echo("<tr>\n");
+                                echo("<td>". $stockrow["name"] . "-". $stockrow["sublocation"] . "</td>\n");
+                                echo("<td><input type='text' value='$new' name='newstock-". $stockrow["id"] . "-$pid' /></td>\n");
+                                echo("</tr>\n");
+                            }
+                            echo("</table>\n");
+
+                        } else {
+                            echo("<td>geen lokatie</td>\n");
+                        }
+
                         echo("</tr>\n");
                     }
 
