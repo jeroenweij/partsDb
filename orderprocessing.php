@@ -139,7 +139,7 @@ if ($result && $result->num_rows > 0) {
                         echo("<td>" . $prow["packed"] . "</td>\n");
                         echo("<td>" . $prow["count"] . "</td>\n");
                         echo("<td>$loss</td>\n");
-                        echo("<td><input type='text' name='newextstock-$pid' /></td>\n");
+                        echo("<td><input type='text' value='$new' name='newextstock-$pid' /></td>\n");
 
 
                         $stockresult = $conn->query("Select stock.id, locations.name, sublocation FROM stock LEFT JOIN locations ON stock.location = locations.id WHERE stock.deleted=0 AND stock.partId=$pid;");
@@ -147,8 +147,8 @@ if ($result && $result->num_rows > 0) {
                             echo("<td><table>\n");
                             while ($stockrow = $stockresult->fetch_assoc()) {
                                 echo("<tr>\n");
-                                echo("<td>". $stockrow["name"] . "-". $stockrow["sublocation"] . "</td>\n");
-                                echo("<td><input type='text' value='$new' name='newstock-". $stockrow["id"] . "-$pid' /></td>\n");
+                                echo("<td>". $stockrow["name"] . " ". $stockrow["sublocation"] . "</td>\n");
+                                echo("<td><input type='text' name='newstock-". $stockrow["id"] . "-$pid' /></td>\n");
                                 echo("</tr>\n");
                             }
                             echo("</table></td>\n");
