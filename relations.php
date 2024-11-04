@@ -21,7 +21,7 @@ if (isset($_POST["edit-id"])) {
         if (strlen($_POST["newname"]) > 0) {
             $sql = "UPDATE relations SET 
                      name='" . $_POST["newname"] . "', 
-                     companyName='" . $_POST["newcompany"] . "', 
+                     company='" . $_POST["newcompany"] . "', 
                      contact='" . $_POST["newcontact"] . "', 
                      address='" . $_POST["newaddress"] . "' 
                      WHERE id=" . $_POST["edit-id"];
