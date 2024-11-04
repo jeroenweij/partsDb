@@ -18,7 +18,7 @@ $sql = "SELECT orders.name, orders.relation, companys.logo, relations.contact,
         companys.address as companyaddress, 
         relations.address as relationaddress,
         companys.name as companyname,
-        relations.name as relationname
+        relations.company as relationname
         FROM orders 
         LEFT JOIN companys ON companys.id=orders.company 
         LEFT JOIN relations ON relations.id=orders.relation 
