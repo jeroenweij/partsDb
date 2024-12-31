@@ -32,7 +32,7 @@ if (isset($_POST["relation"])) {
                     $new = "";
                     if (isset($_POST["newstock-". $stockrow["id"] . "-$pid"])) {
                         $new = validateNumberInput($_POST["newstock-". $stockrow["id"] . "-$pid"]);
-                        $new += $stockrow["count"];
+                        $new += validateNumberInput($stockrow["count"]);
                     }
                     if (strlen($new) > 0) {
                         $conn->query("UPDATE stock SET count=$new WHERE id=". $stockrow["id"] . ";");
