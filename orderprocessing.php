@@ -31,8 +31,8 @@ if (isset($_POST["relation"])) {
                 while ($stockrow = $stockresult->fetch_assoc()) {
                     $new = "";
                     if (isset($_POST["newstock-". $stockrow["id"] . "-$pid"])) {
-                        $new = validateNumberInput($_POST["newstock-". $stockrow["id"] . "-$pid"]);
-                        $new += validateNumberInput($stockrow["count"]);
+                        $new = intval(validateNumberInput($_POST["newstock-". $stockrow["id"] . "-$pid"]));
+                        $new += intval(validateNumberInput($stockrow["count"]));
                     }
                     if (strlen($new) > 0) {
                         $conn->query("UPDATE stock SET count=$new WHERE id=". $stockrow["id"] . ";");
